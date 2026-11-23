@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ملف المؤسسة: {{ establishment.name_ar }} — الهيئة اللبنانية لسلامة الغذاء (LSFA)</title>
+  <style>
+    :root {
+      --navy: #0f2942;
+      --green: #0f5132;
+      --red: #b42318;
+      --amber: #b54708;
+      --bg: #f4f7fa;
+      --border: #d0d7de;
+    }
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+    body { margin: 0; background: var(--bg); color: #102a43; }
+    header.topbar {
+      background: var(--navy);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .topbar-title { font-weight: 700; font-size: 16px; }
+    .topbar-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
+    .pill { background: rgba(255,255,255,.14); padding: 4px 10px; border-radius: 999px; }
+    .btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 12.5px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-secondary { background: #e4e7eb; color: #102a43; }
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.45);
+    }
+    .container { max-width: 1220px; margin: 20px auto; padding: 0 14px 40px; }
+    .panel {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 16px;
+      color: var(--navy);
+      border-bottom: 1px solid #eef2f6;
+      padding-bottom: 8px;
+    }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-size: 13.5px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 820px; }
+    th, td { border: 1px solid var(--border); padding: 9px 10px; text-align: right; vertical-align: top; }
+    th { background: #f8fafc; color: var(--navy); font-weight: 700; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .sev-CRITICAL, .risk-CRITICAL, .st-OPEN { background: #fee2e2; color: #991b1b; }
+    .sev-MAJOR, .risk-HIGH, .st-IN_PROGRESS { background: #fef3c7; color: #92400e; }
+    .sev-MINOR, .risk-MEDIUM { background: #e0f2fe; color: #075985; }
+    .risk-LOW, .st-RESOLVED { background: #dcfce7; color: #14532d; }
+    .ev-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .ev-list img { width: 72px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-title">ملف المؤسسة الرقابي — {{ establishment.name_ar }}</div>
+    <div class="topbar-meta">
+      <span class="pill">المراقب: {{ inspector_name }}</span>
+      <a class="btn btn-primary" href="{% url 'food_safety:field_inspection' %}?est={{ establishment.name_ar|urlencode }}">كشف ميداني جديد</a>
+      <a class="btn btn-outline" href="{% url 'food_safety:followups' %}">متابعة المخالفات</a>
+      <a class="btn btn-outline" href="{% url 'food_safety:field_inspection' %}">الرئيسية</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h2>1. البيانات الأساسية وسجل المخاطر</h2>
+      <div class="info-grid">
+        <div><strong>الاسم:</strong> {{ establishment.name_ar }}</div>
+        <div><strong>المعرّف الثابت:</strong> <code>{{ establishment.permanent_code }}</code></div>
+        <div><strong>القطاع الأساسي:</strong> {{ establishment.primary_form_code }}</div>
+        <div><strong>مستوى الخطورة الحالي:</strong> <span class="badge risk-{{ establishment.risk_level }}">{{ establishment.risk_level }}</span></div>
+        <div><strong>المحافظة:</strong> {{ establishment.governorate|default:"-" }}</div>
+        <div><strong>القضاء / المنطقة:</strong> {{ establishment.district|default:"-" }}</div>
+        <div><strong>العنوان:</strong> {{ establishment.address|default:"-" }}</div>
+        <div><strong>مخالفات مفتوحة:</strong> <strong>{{ open_violations_count }}</strong></div>
+      </div>
+      {% if establishment.latitude and establishment.longitude %}
+      <div style="margin-top:12px;font-size:13px;">
+        <strong>إحداثيات GPS المسجلة:</strong> <code>{{ establishment.latitude }}</code>, <code>{{ establishment.longitude }}</code>
+      </div>
+      {% endif %}
+    </section>
+
+    <section class="panel">
+      <h2>2. سجل زيارات الكشف الميداني ({{ visits|length }})</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>رقم المحضر</th>
+              <th>التاريخ</th>
+              <th>الاستمارة</th>
+              <th>المراقب</th>
+              <th>نسبة المطابقة</th>
+              <th>الخطورة</th>
+              <th>الملاحظات والأدلة</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in visits %}
+            <tr>
+              <td><strong>{{ v.reference_code }}</strong></td>
+              <td>{{ v.created_at|date:"Y-m-d H:i" }}</td>
+              <td>{{ v.template.title_ar|default:v.template.form_code }}</td>
+              <td>{{ v.inspector_name }}</td>
+              <td>{{ v.compliance_score_pct }}%</td>
+              <td><span class="badge risk-{{ v.risk_level }}">{{ v.risk_level }}</span></td>
+              <td>
+                {% if v.general_notes %}<div style="white-space:pre-line;">{{ v.general_notes }}</div>{% else %}-{% endif %}
+                {% for viol in v.violations.all %}
+                  {% if viol.evidences.all %}
+                  <div class="ev-list">
+                    {% for ev in viol.evidences.all %}
+                      {% if ev.file %}
+                      <a href="{{ ev.file.url }}" target="_blank" title="{{ ev.title }}">
+                        <img src="{{ ev.file.url }}" alt="{{ ev.title }}">
+                      </a>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                {% endfor %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" style="text-align:center;padding:20px;">لا توجد زيارات كشف مسجلة لهذه المؤسسة بعد.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>3. المخالفات المسجلة على المؤسسة ({{ violations|length }})</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>رمز المخالفة</th>
+              <th>المحضر</th>
+              <th>الخطورة</th>
+              <th>الحالة</th>
+              <th>الوصف والمتابعة</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for viol in violations %}
+            <tr>
+              <td><strong>{{ viol.code }}</strong></td>
+              <td>{{ viol.visit.reference_code }}</td>
+              <td><span class="badge sev-{{ viol.severity }}">{{ viol.severity }}</span></td>
+              <td><span class="badge st-{{ viol.status }}">{{ viol.status }}</span></td>
+              <td style="white-space:pre-line;">{{ viol.description_ar }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" style="text-align:center;padding:20px;">لا توجد مخالفات مسجلة على هذه المؤسسة.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

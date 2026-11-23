@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>متابعة المخالفات واللوحة الرقابية (CAPA) — LSFA</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0f4c81;
+      --primary-hover: #0b3961;
+      --danger-bg: #fef2f2;
+      --danger-text: #b91c1c;
+      --warn-bg: #fffbeb;
+      --warn-text: #b45309;
+      --info-bg: #eff6ff;
+      --info-text: #1d4ed8;
+      --ok-bg: #ecfdf5;
+      --ok-text: #047857;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 6px 18px rgba(15, 23, 42, 0.04);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      margin: 0;
+      padding: 20px 18px 48px;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .container { max-width: 1280px; margin: 0 auto; }
+
+    .topbar {
+      background: linear-gradient(135deg, #0b2545 0%, #0f4c81 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .topbar h1 { margin: 0; font-size: 20px; font-weight: 700; }
+    .topbar-meta { font-size: 12.5px; color: rgba(255, 255, 255, 0.85); margin-top: 4px; }
+
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+    .nav-link:hover { background: rgba(255, 255, 255, 0.24); }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title { margin: 0 0 14px; font-size: 16px; font-weight: 700; color: var(--text); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .kpi-value { font-size: 22px; font-weight: 700; margin-top: 4px; }
+
+    .est-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+      gap: 14px;
+    }
+
+    .est-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: #fcfcfd;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .est-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 6px 16px rgba(15, 76, 129, 0.08);
+    }
+
+    .est-card.active {
+      border-color: var(--primary);
+      background: #f0f9ff;
+    }
+
+    .est-name { font-size: 15px; font-weight: 700; color: var(--text); }
+    .est-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    .est-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 12.5px; color: #334155; }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 8px 11px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+
+    button, .btn-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-light { background: var(--surface-subtle); color: var(--text); border-color: var(--border-strong); }
+    .btn-light:hover { background: #e2e8f0; }
+
+    .btn-export { background: #0f766e; color: #fff; }
+    .btn-export:hover { background: #115e59; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    table { width: 100%; border-collapse: collapse; min-width: 920px; }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      text-align: right;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    th { background: var(--surface-subtle); color: #334155; font-weight: 700; font-size: 12.5px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--surface-subtle);
+      color: #334155;
+    }
+
+    .sev-critical, .st-open { background: var(--danger-bg); color: var(--danger-text); }
+    .sev-major, .st-in_progress { background: var(--warn-bg); color: var(--warn-text); }
+    .sev-moderate, .st-referred { background: var(--info-bg); color: var(--info-text); }
+    .sev-minor, .st-resolved { background: var(--ok-bg); color: var(--ok-text); }
+
+    .sub { color: var(--muted); font-size: 11.5px; margin-top: 4px; }
+    .inline-form { display: grid; gap: 6px; min-width: 240px; }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      font-size: 13.5px;
+      font-weight: 600;
+      background: var(--info-bg);
+      border: 1px solid #bfdbfe;
+      color: var(--info-text);
+    }
+
+    .audit-item {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fcfcfd;
+      margin-bottom: 8px;
+      font-size: 12.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div>
+        <h1>اللوحة الرقابية ومتابعة المخالفات (CAPA) — LSFA</h1>
+        <div class="topbar-meta">
+          عرض حسب المؤسسة أولاً · عدد الحالات غير المغلقة · مؤشرات الخطورة · سجل التدقيق
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="/field/" class="nav-link">شاشة الكشف الميداني</a>
+        <a href="/admin/" class="nav-link">لوحة الإدارة</a>
+        <a href="/logout/" class="nav-link">تسجيل الخروج</a>
+      </nav>
+    </header>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">المؤسسات ذات المخالفات</div>
+        <div class="kpi-value">{{ establishments_summary|length }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">حالات غير مغلقة</div>
+        <div class="kpi-value" style="color: var(--danger-text);">{{ open_unclosed_total }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">حالات مغلقة (RESOLVED)</div>
+        <div class="kpi-value" style="color: var(--ok-text);">{{ resolved_total }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">حرجة (CRITICAL)</div>
+        <div class="kpi-value" style="color: var(--danger-text);">{{ severity_counts.CRITICAL }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">رئيسية (MAJOR)</div>
+        <div class="kpi-value" style="color: var(--warn-text);">{{ severity_counts.MAJOR }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">متوسطة / بسيطة</div>
+        <div class="kpi-value">{{ severity_counts.MODERATE|add:severity_counts.MINOR }}</div>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2 class="card-title">تصفية وبحث المخالفات</h2>
+      <form method="get" class="filter-grid">
+        {% if selected_est_key %}
+          <input type="hidden" name="est" value="{{ selected_est_key }}" />
+        {% endif %}
+        <div>
+          <label for="severity">الخطورة</label>
+          <select id="severity" name="severity">
+            <option value="">الكل</option>
+            <option value="CRITICAL" {% if selected_severity == "CRITICAL" %}selected{% endif %}>حرج (CRITICAL)</option>
+            <option value="MAJOR" {% if selected_severity == "MAJOR" %}selected{% endif %}>رئيسي (MAJOR)</option>
+            <option value="MODERATE" {% if selected_severity == "MODERATE" %}selected{% endif %}>متوسط (MODERATE)</option>
+            <option value="MINOR" {% if selected_severity == "MINOR" %}selected{% endif %}>بسيط (MINOR)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="status">الحالة</label>
+          <select id="status" name="status">
+            <option value="">الكل</option>
+            <option value="OPEN" {% if selected_status == "OPEN" %}selected{% endif %}>مفتوحة (OPEN)</option>
+            <option value="IN_PROGRESS" {% if selected_status == "IN_PROGRESS" %}selected{% endif %}>قيد المعالجة (IN_PROGRESS)</option>
+            <option value="RESOLVED" {% if selected_status == "RESOLVED" %}selected{% endif %}>مغلقة/محلولة (RESOLVED)</option>
+            <option value="REFERRED" {% if selected_status == "REFERRED" %}selected{% endif %}>محالة (REFERRED)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="q">اسم أو رمز المؤسسة</label>
+          <input type="text" id="q" name="q" value="{{ search_query }}" placeholder="ابحث باسم أو رمز المؤسسة..." />
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="submit" class="btn-primary">تطبيق</button>
+          <a href="/followups/" class="btn-link btn-light">إعادة الفلاتر</a>
+          <a href="/followups/export/csv/?severity={{ selected_severity }}&status={{ selected_status }}&q={{ search_query|urlencode }}" class="btn-link btn-export">تصدير CSV</a>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+        <h2 class="card-title" style="margin: 0;">1. المؤسسات المسجلة وعدد الحالات غير المغلقة</h2>
+        {% if selected_est_key %}
+          <a href="/followups/?severity={{ selected_severity }}&status={{ selected_status }}&q={{ search_query|urlencode }}" class="btn-link btn-light">
+            عرض جميع المؤسسات
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="est-grid">
+        {% for grp in establishments_summary %}
+          <div class="est-card {% if grp.key == selected_est_key %}active{% endif %}">
+            <div>
+              <div class="est-name">{{ grp.name }}</div>
+              <div class="est-meta">
+                {% if grp.code %}الرمز: <strong>{{ grp.code }}</strong>{% endif %}
+                {% if grp.governorate %}{% if grp.code %} · {% endif %}{{ grp.governorate }}{% endif %}
+              </div>
+              <div class="est-pills">
+                <span class="badge st-open">غير مغلقة: {{ grp.unclosed_count }}</span>
+                <span class="badge sev-critical">حرجة: {{ grp.critical_count }}</span>
+                <span class="badge">الإجمالي: {{ grp.total_count }}</span>
+                <span class="badge st-resolved">مغلقة: {{ grp.resolved_count }}</span>
+              </div>
+            </div>
+            <div>
+              <a href="/followups/?est={{ grp.key }}&severity={{ selected_severity }}&status={{ selected_status }}&q={{ search_query|urlencode }}" class="btn-link btn-primary" style="width: 100%;">
+                الدخول إلى ملف المؤسسة
+              </a>
+            </div>
+          </div>
+        {% empty %}
+          <div class="sub">لا توجد مؤسسات مرتبطة بمخالفات حالياً.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+        <h2 class="card-title" style="margin: 0;">
+          {% if selected_establishment_group %}
+            2. مخالفات المؤسسة: {{ selected_establishment_group.name }} (غير مغلقة: {{ selected_establishment_group.unclosed_count }})
+          {% else %}
+            2. سجل المخالفات والإجراءات التصحيحية ({{ violations|length }})
+          {% endif %}
+        </h2>
+        {% if selected_est_key %}
+          <a href="/followups/" class="btn-link btn-light">العودة لكل المؤسسات</a>
+        {% endif %}
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 7%;">#</th>
+              <th style="width: 20%;">المؤسسة والزيارة</th>
+              <th style="width: 28%;">تفاصيل المخالفة</th>
+              <th style="width: 13%;">الخطورة والحالة</th>
+              <th style="width: 32%;">تحديث المتابعة (CAPA)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in violations %}
+              <tr>
+                <td><strong>#{{ v.pk }}</strong></td>
+                <td>
+                  {% if v.establishment %}
+                    <div><strong>{{ v.establishment.name_ar|default:v.establishment }}</strong></div>
+                    {% if v.establishment.code %}
+                      <div class="sub">الرمز: {{ v.establishment.code }}</div>
+                    {% endif %}
+                  {% else %}
+                    <span class="sub">مؤسسة غير محددة</span>
+                  {% endif %}
+                  {% if v.visit %}
+                    <div class="sub">
+                      الزيارة: <a href="/visits/{{ v.visit.pk }}/">{{ v.visit.reference_code|default:v.visit.pk }}</a>
+                    </div>
+                  {% endif %}
+                </td>
+                <td>
+                  <div>{{ v.description_ar|default:v }}</div>
+                  {% if v.corrective_action %}
+                    <div class="sub"><strong>الإجراء التصحيحي:</strong> {{ v.corrective_action }}</div>
+                  {% endif %}
+                  {% if v.verification_note %}
+                    <div class="sub"><strong>ملاحظة التحقق:</strong> {{ v.verification_note }}</div>
+                  {% endif %}
+                  {% if v.created_at %}
+                    <div class="sub">تاريخ التسجيل: {{ v.created_at|date:"Y-m-d H:i" }}</div>
+                  {% endif %}
+                </td>
+                <td>
+                  <div><span class="badge sev-{{ v.severity|lower }}">{{ v.severity }}</span></div>
+                  <div style="margin-top: 6px;"><span class="badge st-{{ v.status|lower }}">{{ v.status }}</span></div>
+                </td>
+                <td>
+                  <form method="post" class="inline-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="violation_id" value="{{ v.pk }}" />
+                    <select name="status">
+                      <option value="OPEN" {% if v.status == "OPEN" %}selected{% endif %}>OPEN — مفتوحة</option>
+                      <option value="IN_PROGRESS" {% if v.status == "IN_PROGRESS" %}selected{% endif %}>IN_PROGRESS — قيد المعالجة</option>
+                      <option value="RESOLVED" {% if v.status == "RESOLVED" %}selected{% endif %}>RESOLVED — مغلقة (يتطلب ملاحظة تحقق)</option>
+                      <option value="REFERRED" {% if v.status == "REFERRED" %}selected{% endif %}>REFERRED — محالة</option>
+                    </select>
+                    <input type="text" name="corrective_action" value="{{ v.corrective_action|default:'' }}" placeholder="الإجراء التصحيحي المطلوب أو المنفّذ..." />
+                    <input type="text" name="verification_note" value="{{ v.verification_note|default:'' }}" placeholder="ملاحظة / إثبات التحقق (إلزامي للإغلاق)..." />
+                    <button type="submit" class="btn-primary">حفظ التحديث</button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 24px; color: var(--muted);">
+                  لا توجد مخالفات مطابقة للمعايير المحددة حالياً.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">أحدث الزيارات الميدانية المسجلة</h2>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        {% for vis in recent_visits %}
+          <a href="/visits/{{ vis.pk }}/" class="btn-link btn-light">
+            {{ vis.reference_code|default:vis.pk }}
+            {% if vis.establishment %} — {{ vis.establishment.name_ar|default:vis.establishment }}{% endif %}
+          </a>
+        {% empty %}
+          <div class="sub">لا توجد زيارات مسجلة بعد.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">سجل التدقيق الأخير للمخالفات (Audit Log)</h2>
+      {% for entry in recent_audits %}
+        <div class="audit-item">
+          <strong>#{{ entry.entity_id }}</strong> ·
+          <span class="badge">{{ entry.action }}</span> ·
+          المستخدم: <strong>{{ entry.actor|default:"النظام" }}</strong>
+          {% if entry.timestamp %}
+            · <span class="sub" style="display: inline;">{{ entry.timestamp|date:"Y-m-d H:i" }}</span>
+          {% endif %}
+          {% if entry.reason %}
+            <div class="sub">{{ entry.reason }}</div>
+          {% endif %}
+        </div>
+      {% empty %}
+        <div class="sub">لا توجد سجلات تدقيق حديثة بعد.</div>
+      {% endfor %}
+    </section>
+  </div>
+</body>
+</html>

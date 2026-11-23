@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>البوابة المركزية — منصة سلامة الغذاء LSFA</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0f4c81;
+      --primary-hover: #0b3961;
+      --danger-text: #b91c1c;
+      --radius: 14px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      margin: 0;
+      padding: 20px 18px 48px;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container { max-width: 1180px; margin: 0 auto; }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2545 0%, #0f4c81 65%, #1565a8 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 24px 26px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .hero h1 { margin: 0; font-size: 22px; font-weight: 700; }
+    .hero p { margin: 6px 0 0; font-size: 13.5px; color: rgba(255, 255, 255, 0.88); }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .role-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .role-tag {
+      display: inline-block;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--surface-subtle);
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .role-title { margin: 0 0 8px; font-size: 19px; font-weight: 700; }
+    .role-desc { margin: 0; font-size: 13.5px; color: var(--muted); }
+
+    .role-links { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 11px;
+      font-size: 13.5px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-light { background: var(--surface-subtle); color: var(--text); border-color: var(--border-strong); }
+    .btn-light:hover { background: #e2e8f0; }
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+    .kpi-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .kpi-value { font-size: 22px; font-weight: 700; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <div>
+        <h1>البوابة المركزية — منصة سلامة الغذاء LSFA</h1>
+        <p>
+          المستخدم: <strong>{{ current_user_display }}</strong> · التوقيت: <strong>{{ now_display }}</strong>.
+          اختر مسار الدخول حسب الدور الوظيفي: <strong>مفتش</strong> أو <strong>إدارة</strong>.
+        </p>
+      </div>
+      <div>
+        {% if is_authenticated %}
+          <a href="/logout/" class="btn btn-ghost">تسجيل الخروج</a>
+        {% else %}
+          <a href="/login/" class="btn btn-ghost">تسجيل الدخول</a>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">إجمالي زيارات الكشف</div>
+        <div class="kpi-value">{{ total_visits }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">مخالفات غير مغلقة</div>
+        <div class="kpi-value" style="color: var(--danger-text);">{{ unclosed_violations }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">مخالفات حرجة</div>
+        <div class="kpi-value" style="color: var(--danger-text);">{{ critical_violations }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">إجمالي المخالفات</div>
+        <div class="kpi-value">{{ total_violations }}</div>
+      </div>
+    </div>
+
+    <div class="role-grid">
+      <section class="role-card">
+        <div>
+          <span class="role-tag">المسار الميداني</span>
+          <h2 class="role-title">دخول المفتش (Inspector)</h2>
+          <p class="role-desc">
+            الوصول المباشر إلى نظام التفتيش الميداني لتعبئة قوائم التفتيش، والتقاط GPS والصور والتواقيع، وإلى متابعة المخالفات (Follow-up / CAPA).
+          </p>
+        </div>
+        <div class="role-links">
+          {% if is_authenticated %}
+            <a href="/field/" class="btn btn-primary">نظام التفتيش (/field/)</a>
+            <a href="/followups/" class="btn btn-light">المتابعة (/followups/)</a>
+          {% else %}
+            <a href="/login/?role=inspector&next=/field/" class="btn btn-primary">دخول مفتش — التفتيش</a>
+            <a href="/login/?role=inspector&next=/followups/" class="btn btn-light">دخول مفتش — المتابعة</a>
+          {% endif %}
+        </div>
+      </section>
+
+      <section class="role-card">
+        <div>
+          <span class="role-tag">المسار الرقابي والإداري</span>
+          <h2 class="role-title">دخول الإدارة (Administration)</h2>
+          <p class="role-desc">
+            الاطلاع الشامل على المخالفات وأمور الكشف حسب المحافظات والأقضية مع جداول، رسوم بيانية، وخريطة لبنان، إضافة إلى لوحة الإدارة.
+          </p>
+        </div>
+        <div class="role-links">
+          {% if is_authenticated %}
+            <a href="/admin-dashboard/" class="btn btn-primary">لوحة الإدارة والبيانات</a>
+            <a href="/admin/" class="btn btn-light">إدارة النظام (/admin/)</a>
+          {% else %}
+            <a href="/login/?role=admin&next=/admin-dashboard/" class="btn btn-primary">دخول إدارة — اللوحة الشاملة</a>
+            <a href="/login/?role=admin&next=/admin/" class="btn btn-light">دخول إدارة — Django Admin</a>
+          {% endif %}
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

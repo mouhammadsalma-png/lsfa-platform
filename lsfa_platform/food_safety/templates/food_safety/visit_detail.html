@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تفاصيل الزيارة الميدانية {{ reference_code }} — LSFA</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0f4c81;
+      --danger-bg: #fef2f2;
+      --danger-text: #b91c1c;
+      --warn-bg: #fffbeb;
+      --warn-text: #b45309;
+      --info-bg: #eff6ff;
+      --info-text: #1d4ed8;
+      --ok-bg: #ecfdf5;
+      --ok-text: #047857;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 6px 18px rgba(15, 23, 42, 0.04);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      margin: 0;
+      padding: 20px 18px 48px;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .container { max-width: 1240px; margin: 0 auto; }
+
+    .topbar {
+      background: linear-gradient(135deg, #0b2545 0%, #0f4c81 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .topbar h1 { margin: 0; font-size: 20px; font-weight: 700; }
+    .topbar-meta { font-size: 12.5px; color: rgba(255, 255, 255, 0.85); margin-top: 4px; }
+
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+    .nav-link:hover { background: rgba(255, 255, 255, 0.24); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .kpi-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title { margin: 0 0 14px; font-size: 16px; font-weight: 700; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .info-item {
+      background: #fcfcfd;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .info-label { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+    .info-val { font-size: 13.5px; font-weight: 600; margin-top: 3px; word-break: break-word; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      text-align: right;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    th { background: var(--surface-subtle); font-weight: 700; color: #334155; }
+    tr:last-child td { border-bottom: none; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--surface-subtle);
+      color: #334155;
+    }
+
+    .sev-critical, .st-open { background: var(--danger-bg); color: var(--danger-text); }
+    .sev-major, .st-in_progress { background: var(--warn-bg); color: var(--warn-text); }
+    .sev-moderate, .st-referred { background: var(--info-bg); color: var(--info-text); }
+    .sev-minor, .st-resolved { background: var(--ok-bg); color: var(--ok-text); }
+
+    .sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    pre {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 12px;
+      overflow-x: auto;
+      direction: ltr;
+      text-align: left;
+      margin: 0;
+    }
+
+    @media print {
+      .nav-links { display: none; }
+      body { background: #fff; padding: 0; }
+      .card, .kpi-card, .topbar { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div>
+        <h1>تفاصيل الزيارة الميدانية — {{ reference_code }}</h1>
+        <div class="topbar-meta">
+          المفتش: <strong>{{ inspector_display }}</strong>
+          {% if inspected_at %} · التاريخ: <strong>{{ inspected_at|date:"Y-m-d H:i" }}</strong>{% endif %}
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="/" class="nav-link">البوابة الرئيسية</a>
+        <a href="/field/" class="nav-link">كشف جديد</a>
+        <a href="/followups/" class="nav-link">متابعة المخالفات</a>
+        <a href="javascript:window.print()" class="nav-link">طباعة التقرير</a>
+      </nav>
+    </header>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">نسبة الامتثال</div>
+        <div class="kpi-value">{{ compliance_score|default:"—" }}{% if compliance_score is not None %}%{% endif %}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">درجة الخطورة</div>
+        <div class="kpi-value">{{ risk_score|default:"—" }}{% if risk_score is not None %} / 100{% endif %}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">المخالفات المرتبطة</div>
+        <div class="kpi-value">{{ violations|length }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">حالة الزيارة</div>
+        <div class="kpi-value" style="font-size: 16px;">{{ visit.status|default:"SUBMITTED" }}</div>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2 class="card-title">بيانات المؤسسة والعنوان والموقع الجغرافي (GPS)</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">اسم المؤسسة</div>
+          <div class="info-val">{{ est_details.name }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">الرمز الثابت للمؤسسة</div>
+          <div class="info-val">{{ est_details.code|default:"—" }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">المحافظة والقضاء</div>
+          <div class="info-val">{{ est_details.governorate|default:"—" }}{% if est_details.district %} — {{ est_details.district }}{% endif %}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">العنوان التفصيلي</div>
+          <div class="info-val">{{ est_details.address|default:"—" }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">المسؤول والهاتف</div>
+          <div class="info-val">{{ est_details.owner|default:"—" }}{% if est_details.phone %} · {{ est_details.phone }}{% endif %}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">رقم الترخيص</div>
+          <div class="info-val">{{ est_details.license|default:"—" }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">إحداثيات GPS</div>
+          <div class="info-val">
+            {% if gps_lat and gps_lng %}
+              {{ gps_lat }}, {{ gps_lng }}
+              <div class="sub">
+                <a href="https://www.google.com/maps?q={{ gps_lat }},{{ gps_lng }}" target="_blank">فتح على الخريطة</a>
+              </div>
+            {% else %}
+              غير مسجلة
+            {% endif %}
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">الصور المرفقة الموثقة</div>
+          <div class="info-val">
+            {% if audit_state.evidence_photos %}
+              {{ audit_state.evidence_photos|join:" ، " }}
+            {% else %}
+              {{ audit_state.evidence_photos_count|default:0 }} صور
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">الملخص التنفيذي والإمضاء والتصديق</h2>
+      <div class="info-grid">
+        <div class="info-item" style="grid-column: 1 / -1;">
+          <div class="info-label">الملخص العام والملاحظات</div>
+          <div class="info-val">{{ summary_notes|default:"—" }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">اعتماد / إمضاء المفتش</div>
+          <div class="info-val">{{ inspector_signature|default:inspector_display }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ممثل المؤسسة</div>
+          <div class="info-val">{{ representative_name|default:"—" }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">إمضاء / إقرار ممثل المؤسسة</div>
+          <div class="info-val">{{ representative_signature|default:"—" }}</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">المخالفات المولّدة ضمن هذه الزيارة</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 8%;">#</th>
+              <th style="width: 48%;">تفاصيل المخالفة</th>
+              <th style="width: 16%;">الخطورة</th>
+              <th style="width: 14%;">الحالة</th>
+              <th style="width: 14%;">المتابعة</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in violations %}
+              <tr>
+                <td><strong>#{{ v.pk }}</strong></td>
+                <td>{{ v.description_ar|default:v }}</td>
+                <td><span class="badge sev-{{ v.severity|lower }}">{{ v.severity }}</span></td>
+                <td><span class="badge st-{{ v.status|lower }}">{{ v.status }}</span></td>
+                <td><a href="/followups/?q={{ est_details.name|urlencode }}">فتح في CAPA</a></td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 20px; color: var(--muted);">
+                  لا توجد مخالفات مسجلة لهذه الزيارة.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {% if audit_state %}
+      <section class="card">
+        <h2 class="card-title">بيانات التدقيق الموثقة (Audit Snapshot)</h2>
+        <pre>{{ audit_state }}</pre>
+      </section>
+    {% endif %}
+  </div>
+</body>
+</html>

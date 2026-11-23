@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>منصة الكشف الميداني — LSFA</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0f4c81;
+      --primary-hover: #0b3961;
+      --danger-bg: #fef2f2;
+      --danger-text: #b91c1c;
+      --warn-bg: #fffbeb;
+      --warn-text: #b45309;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 6px 18px rgba(15, 23, 42, 0.04);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      margin: 0;
+      padding: 20px 18px 48px;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      background: linear-gradient(135deg, #0b2545 0%, #0f4c81 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .topbar-meta {
+      font-size: 12.5px;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      transition: background 0.15s ease;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .sticky-hud {
+      position: sticky;
+      top: 10px;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 12px 16px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      margin-bottom: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hud-stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .hud-pill {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 12.5px;
+    }
+
+    .hud-pill strong {
+      font-size: 14px;
+      margin-right: 4px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      margin: 0 0 14px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .grid {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 720px) {
+      .span-2 { grid-column: span 1; }
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #334155;
+    }
+
+    select, input[type="text"], input[type="file"], textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    select:focus, input[type="text"]:focus, input[type="file"]:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.14);
+    }
+
+    input[readonly] {
+      background: var(--surface-subtle);
+      color: #334155;
+      font-weight: 600;
+    }
+
+    textarea {
+      min-height: 82px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-secondary {
+      background: #334155;
+      color: #fff;
+    }
+    .btn-secondary:hover { background: #1e293b; }
+
+    .btn-light {
+      background: var(--surface-subtle);
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+    .btn-light:hover { background: #e2e8f0; }
+
+    .meta-strip {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .jump-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 12px 0 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .jump-link {
+      text-decoration: none;
+      background: var(--surface-subtle);
+      color: var(--primary);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .jump-link:hover { background: #e0f2fe; border-color: #bae6fd; }
+
+    .section-block {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      background: #fcfcfd;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .sec-desc {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 780px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      text-align: right;
+      font-size: 13px;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--surface-subtle);
+      color: #334155;
+      font-weight: 700;
+      font-size: 12.5px;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--surface-subtle);
+      color: #334155;
+    }
+
+    .crit { background: var(--danger-bg); color: var(--danger-text); }
+    .maj { background: var(--warn-bg); color: var(--warn-text); }
+
+    .sub {
+      color: var(--muted);
+      font-size: 11.5px;
+      margin-top: 4px;
+    }
+
+    .sig-pad {
+      border: 1.5px dashed var(--border-strong);
+      border-radius: 10px;
+      background: #f8fafc;
+      width: 100%;
+      height: 112px;
+      touch-action: none;
+    }
+
+    .msg {
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      background: var(--danger-bg);
+      border: 1px solid #fecaca;
+      color: var(--danger-text);
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .preview-strip {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .preview-thumb {
+      width: 116px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 5px;
+      background: var(--surface-subtle);
+      text-align: center;
+    }
+
+    .preview-thumb img {
+      width: 100%;
+      height: 76px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div>
+        <h1>منصة الكشف الميداني — الهيئة اللبنانية لسلامة الغذاء (LSFA)</h1>
+        <div class="topbar-meta">
+          المفتش: <strong>{{ current_user_display }}</strong> · الجهة: <strong>LSFA</strong> · التاريخ والوقت: <strong>{{ now_display }}</strong>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="/" class="nav-link">البوابة الرئيسية</a>
+        <a href="/followups/" class="nav-link">متابعة المخالفات (CAPA)</a>
+        <a href="/admin/" class="nav-link">لوحة الإدارة</a>
+        <a href="/logout/" class="nav-link">تسجيل الخروج</a>
+      </nav>
+    </header>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="msg">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="sticky-hud">
+      <div class="hud-stats">
+        <div class="hud-pill">الامتثال: <strong id="liveScore">100%</strong></div>
+        <div class="hud-pill">الخطورة: <strong id="liveRisk">5 / 100 (LOW)</strong></div>
+        <div class="hud-pill">المخالفات: <strong id="liveNonComp">0 / 0 حرج</strong></div>
+        <div class="hud-pill">النتيجة: <strong id="liveOutcome">مطابق — استيفاء المتطلبات الصحية المعتمدة</strong></div>
+        <div class="hud-pill" id="netStatusPill">الاتصال: <strong id="netStatusText">متصل</strong></div>
+        <div class="hud-pill">المسودة: <strong id="draftStatusText">محفوظة تلقائياً</strong></div>
+      </div>
+      <button type="submit" form="inspectionForm" class="btn-primary">حفظ الكشف</button>
+    </div>
+
+    <section class="card">
+      <h2 class="card-title">تصنيف القطاع والنشاط الفرعي</h2>
+      <form method="get" class="grid">
+        <div style="flex: 1; min-width: 240px;">
+          <label for="sector">القطاع ({{ sectors|length }})</label>
+          <select id="sector" name="sector" onchange="this.form.submit()">
+            {% for grp in grouped_sectors %}
+              <optgroup label="{{ grp.label }}">
+                {% for s in grp.sectors %}
+                  <option value="{{ s.code }}" {% if selected_sector and s.code == selected_sector.code %}selected{% endif %}>
+                    {{ s.code }} — {{ s.name_ar }}
+                  </option>
+                {% endfor %}
+              </optgroup>
+            {% empty %}
+              <option value="">لا توجد قطاعات مسجلة</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div style="flex: 1; min-width: 240px;">
+          <label for="activity">النشاط الفرعي ({{ activities|length }})</label>
+          <select id="activity" name="activity" onchange="this.form.submit()">
+            {% for act in activities %}
+              <option value="{{ act.code }}" {% if selected_activity and act.code == selected_activity.code %}selected{% endif %}>
+                {{ act.code }} — {{ act.name_ar }}
+              </option>
+            {% empty %}
+              <option value="">جميع الأنشطة / عام</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <button type="submit" class="btn-secondary">تحديث القائمة</button>
+        </div>
+      </form>
+
+      <div class="meta-strip">
+        {% if version %}
+          <span><strong>الإصدار المعتمد:</strong> {{ version }}</span>
+        {% endif %}
+        <span><strong>إجمالي البنود الظاهرة:</strong> {{ total_items_count }}</span>
+        <span><strong>البنود الحرجة (CRITICAL):</strong> {{ critical_items_count }}</span>
+      </div>
+    </section>
+
+    <form method="post" id="inspectionForm" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <section class="card">
+        <h2 class="card-title">1. بيانات المؤسسة والعنوان والتفاصيل</h2>
+
+        <div class="grid" style="margin-bottom: 12px;">
+          <div style="min-width: 220px;">
+            <label for="establishment_mode">طريقة تحديد المؤسسة</label>
+            <select id="establishment_mode" name="establishment_mode" onchange="toggleEstablishmentMode()">
+              <option value="existing">اختيار مؤسسة مسجلة</option>
+              <option value="new">إدخال مؤسسة جديدة + رقم ثابت</option>
+            </select>
+          </div>
+
+          <div id="existingEstBox" style="flex: 1; min-width: 280px;">
+            <label for="establishment_id">المؤسسة المسجلة</label>
+            <select id="establishment_id" name="establishment_id">
+              <option value="">— اختر مؤسسة —</option>
+              {% for est in establishments %}
+                <option value="{{ est.id }}">
+                  {{ est.code }} — {{ est.name_ar }}{% if est.governorate %} ({{ est.governorate }}){% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div id="newEstCodeBox" class="hidden" style="min-width: 240px;">
+            <label>الرقم الثابت المولّد تلقائياً</label>
+            <input type="text" id="generated_code_preview" readonly value="يُولّد تلقائياً عند الحفظ ({{ selected_sector.code|default:'GEN' }})" />
+          </div>
+        </div>
+
+        <div id="newEstFields" class="two-col hidden" style="margin-bottom: 12px;">
+          <div>
+            <label for="new_name_ar">اسم المؤسسة الجديدة (عربي) *</label>
+            <input type="text" id="new_name_ar" name="new_name_ar" placeholder="مثال: ملحمة الأرز الحديثة" />
+          </div>
+          <div>
+            <label for="new_name_en">الاسم التجاري / الإنجليزي</label>
+            <input type="text" id="new_name_en" name="new_name_en" placeholder="Optional commercial/English name" />
+          </div>
+          <div>
+            <label for="owner_or_manager">اسم المالك أو المسؤول</label>
+            <input type="text" id="owner_or_manager" name="owner_or_manager" placeholder="الاسم الثلاثي للمسؤول" />
+          </div>
+          <div>
+            <label for="phone">رقم الهاتف / التواصل</label>
+            <input type="text" id="phone" name="phone" placeholder="مثال: 03-123456" />
+          </div>
+          <div>
+            <label for="license_number">رقم الترخيص / السجل التجاري</label>
+            <input type="text" id="license_number" name="license_number" placeholder="رقم الترخيص إن وُجد" />
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <label for="governorate">المحافظة</label>
+            <select id="governorate" name="governorate">
+              <option value="">— اختر المحافظة —</option>
+              {% for gov in governorates %}
+                <option value="{{ gov }}">{{ gov }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label for="district">القضاء / البلدة / المنطقة</label>
+            <input type="text" id="district" name="district" placeholder="مثال: المتن / الجديدة / صيدا" />
+          </div>
+          <div class="span-2">
+            <label for="address_detail">العنوان التفصيلي (الشارع، البناء، الطابق، المعلم)</label>
+            <input type="text" id="address_detail" name="address_detail" placeholder="أدخل العنوان الكامل بدقة..." />
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">2. الموقع الجغرافي (GPS) والصور والأدلة الميدانية</h2>
+
+        <div class="two-col">
+          <div>
+            <label for="gps_lat">خط العرض (Latitude)</label>
+            <input type="text" id="gps_lat" name="gps_lat" placeholder="مثال: 33.8938" oninput="updateMapLink()" />
+          </div>
+          <div>
+            <label for="gps_lng">خط الطول (Longitude)</label>
+            <input type="text" id="gps_lng" name="gps_lng" placeholder="مثال: 35.5018" oninput="updateMapLink()" />
+          </div>
+          <div>
+            <label for="gps_accuracy">دقة الإحداثيات (متر)</label>
+            <input type="text" id="gps_accuracy" name="gps_accuracy" placeholder="مثال: 10m" />
+          </div>
+          <div style="display: flex; align-items: end; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn-secondary" onclick="captureGPS()">التقاط الموقع الحالي (GPS)</button>
+            <a id="mapLink" href="#" target="_blank" class="hidden" style="font-size: 13px; font-weight: 600; color: var(--primary);">فتح على الخريطة</a>
+          </div>
+        </div>
+        <div id="gpsStatus" class="sub">يمكن التقاط الإحداثيات تلقائياً أو إدخالها يدوياً.</div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 16px 0;" />
+
+        <div class="two-col">
+          <div>
+            <label for="evidence_photos">إرفاق أو التقاط صور الكشف الميداني</label>
+            <input type="file" id="evidence_photos" name="evidence_photos" accept="image/*" capture="environment" multiple onchange="previewSelectedPhotos()" />
+            <div class="sub">يمكن اختيار صورة أو عدة صور من الكاميرا أو المعرض.</div>
+          </div>
+          <div>
+            <label for="evidence_caption">وصف / تعليق الصور والأدلة الميدانية</label>
+            <input type="text" id="evidence_caption" name="evidence_caption" placeholder="مثال: صور البرادات، بطاقة التوضيب، أو موقع المخالفة..." />
+          </div>
+        </div>
+        <div id="photoPreviewStrip" class="preview-strip"></div>
+      </section>
+
+      <section class="card" id="checklistContainer">
+        <div class="section-head">
+          <h2 class="card-title" style="margin: 0;">3. لوائح وبنود التفتيش المعتمدة</h2>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn-light" onclick="setAllItemsStatus('COMPLIANT')">تعيين الكل: مطابق</button>
+            <button type="button" class="btn-light" onclick="toggleAllSections(true)">فتح الكل</button>
+            <button type="button" class="btn-light" onclick="toggleAllSections(false)">طي الكل</button>
+          </div>
+        </div>
+
+        {% if sections_with_items %}
+          <div class="jump-bar">
+            {% for group in sections_with_items %}
+              <a href="#sec-{{ group.section.id }}" class="jump-link">
+                {{ group.section.code }} — {{ group.section.title_ar }} ({{ group.items|length }})
+              </a>
+            {% endfor %}
+          </div>
+
+          {% for group in sections_with_items %}
+            <div id="sec-{{ group.section.id }}" class="section-block">
+              <div class="section-head">
+                <div>
+                  <h3 style="margin: 0; font-size: 15px;">{{ group.section.code }} — {{ group.section.title_ar }}</h3>
+                  {% if group.section.title_en %}
+                    <div class="sec-desc">{{ group.section.title_en }}</div>
+                  {% endif %}
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <button type="button" class="btn-light" style="padding: 6px 11px; font-size: 12px;" onclick="setSectionStatus('sec-{{ group.section.id }}', 'COMPLIANT')">القسم مطابق</button>
+                  <button type="button" class="btn-light" style="padding: 6px 11px; font-size: 12px;" onclick="toggleSingleSection('sec-{{ group.section.id }}')">طي/فتح</button>
+                </div>
+              </div>
+
+              <div class="section-body">
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style="width: 10%;">الرمز</th>
+                        <th style="width: 30%;">البند ومعيار التحقق</th>
+                        <th style="width: 14%;">الخطورة والوزن</th>
+                        <th style="width: 16%;">الإثبات والمرجع</th>
+                        <th style="width: 14%;">الحالة</th>
+                        <th style="width: 16%;">ملاحظة المفتش</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for item in group.items %}
+                        <tr class="checklist-row" data-weight="{{ item.raw_weight }}" data-severity="{{ item.severity }}">
+                          <td><strong>{{ item.item_code }}</strong></td>
+                          <td>
+                            <div><strong>{{ item.title_ar }}</strong></div>
+                            {% if item.verification_criterion %}
+                              <div class="sub">المعيار: {{ item.verification_criterion }}</div>
+                            {% endif %}
+                          </td>
+                          <td>
+                            <span class="badge {% if item.severity == 'CRITICAL' %}crit{% elif item.severity == 'MAJOR' %}maj{% endif %}">
+                              {{ item.get_severity_display }}
+                            </span>
+                            <div class="sub">الوزن: {{ item.raw_weight }}</div>
+                            {% if item.verification_method %}
+                              <div class="sub">الطريقة: {{ item.verification_method }}</div>
+                            {% endif %}
+                          </td>
+                          <td>
+                            {% if item.required_evidence %}
+                              <div>{{ item.required_evidence }}</div>
+                            {% endif %}
+                            {% if item.legal_reference %}
+                              <div class="sub">المرجع: {{ item.legal_reference }}</div>
+                            {% endif %}
+                          </td>
+                          <td>
+                            <select class="item-status-select" name="status_{{ item.id }}" onchange="recalculateLiveSummary()">
+                              <option value="COMPLIANT">مطابق بالكامل</option>
+                              <option value="PARTIALLY_COMPLIANT">مطابق جزئياً</option>
+                              <option value="NON_COMPLIANT">غير مطابق</option>
+                              <option value="NOT_APPLICABLE">لا ينطبق</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input type="text" name="note_{{ item.id }}" placeholder="ملاحظة أو قراءة أو دليل..." />
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="sub" style="padding: 12px 0;">لا توجد بنود منشورة لهذا القطاع/النشاط حالياً.</div>
+        {% endif %}
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">4. الملخص التنفيذي والإمضاء والتصديق</h2>
+
+        <div style="margin-bottom: 14px;">
+          <label for="executive_summary">الملخص العام والملاحظات الختامية والإجراءات المطلوبة</label>
+          <textarea id="executive_summary" name="executive_summary" placeholder="اكتب ملخص الكشف، أبرز الملاحظات الميدانية، أو المهل التصحيحية..."></textarea>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <label for="inspector_signature">إمضاء / اعتماد المفتش ({{ current_user_display }})</label>
+            <input type="text" id="inspector_signature" name="inspector_signature" value="{{ current_user_display }}" />
+            <div class="sub">توقيع يدوي اختياري للمفتش:</div>
+            <canvas id="inspectorPad" class="sig-pad"></canvas>
+            <div style="margin-top: 6px;">
+              <button type="button" class="btn-light" onclick="clearPad('inspectorPad')">مسح توقيع المفتش</button>
+            </div>
+          </div>
+
+          <div>
+            <label for="representative_name">اسم ممثل المؤسسة / المدير</label>
+            <input type="text" id="representative_name" name="representative_name" placeholder="اسم الشخص الحاضر أثناء الكشف" />
+            <label for="representative_signature" style="margin-top: 8px;">إمضاء / إقرار ممثل المؤسسة</label>
+            <input type="text" id="representative_signature" name="representative_signature" placeholder="اكتب الاسم أو الإقرار بالتسلم" />
+            <div class="sub">توقيع يدوي اختياري لممثل المؤسسة:</div>
+            <canvas id="repPad" class="sig-pad"></canvas>
+            <div style="margin-top: 6px;">
+              <button type="button" class="btn-light" onclick="clearPad('repPad')">مسح توقيع المؤسسة</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+          <button type="submit" class="btn-primary">حفظ الكشف وتوليد المخالفات وتسجيل التدقيق</button>
+          <button type="button" class="btn-light" onclick="resetInspectionForm()">إعادة ضبط النموذج</button>
+        </div>
+      </section>
+    </form>
+  </div>
+
+  <script>
+    const DRAFT_STORAGE_KEY = "lsfa_field_draft_" + window.location.pathname + "_" + window.location.search;
+
+    function toggleEstablishmentMode() {
+      const mode = document.getElementById("establishment_mode").value;
+      const existingBox = document.getElementById("existingEstBox");
+      const estSelect = document.getElementById("establishment_id");
+      const newFields = document.getElementById("newEstFields");
+      const newCodeBox = document.getElementById("newEstCodeBox");
+      const newNameAr = document.getElementById("new_name_ar");
+
+      if (mode === "new") {
+        existingBox.classList.add("hidden");
+        estSelect.required = false;
+        newFields.classList.remove("hidden");
+        newCodeBox.classList.remove("hidden");
+        newNameAr.required = true;
+      } else {
+        existingBox.classList.remove("hidden");
+        estSelect.required = true;
+        newFields.classList.add("hidden");
+        newCodeBox.classList.add("hidden");
+        newNameAr.required = false;
+      }
+    }
+
+    function captureGPS() {
+      const statusEl = document.getElementById("gpsStatus");
+      if (!navigator.geolocation) {
+        statusEl.textContent = "المتصفح لا يدعم تحديد الموقع الجغرافي تلقائياً؛ يمكنك إدخال الإحداثيات يدوياً.";
+        return;
+      }
+      statusEl.textContent = "جارٍ التقاط الإحداثيات الجغرافية...";
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude.toFixed(6);
+          const lng = pos.coords.longitude.toFixed(6);
+          const acc = Math.round(pos.coords.accuracy);
+          document.getElementById("gps_lat").value = lat;
+          document.getElementById("gps_lng").value = lng;
+          document.getElementById("gps_accuracy").value = acc + "m";
+          statusEl.textContent = "تم التقاط الموقع بنجاح بدقة تقريبية " + acc + " متر.";
+          updateMapLink();
+          saveDraftToLocal();
+        },
+        (err) => {
+          statusEl.textContent = "تعذر التقاط الموقع تلقائياً (" + err.message + "). يمكنك إدخال الإحداثيات يدوياً.";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    function updateMapLink() {
+      const lat = document.getElementById("gps_lat").value.trim();
+      const lng = document.getElementById("gps_lng").value.trim();
+      const link = document.getElementById("mapLink");
+      if (lat && lng) {
+        link.href = "https://www.google.com/maps?q=" + encodeURIComponent(lat + "," + lng);
+        link.classList.remove("hidden");
+      } else {
+        link.classList.add("hidden");
+      }
+    }
+
+    function previewSelectedPhotos() {
+      const input = document.getElementById("evidence_photos");
+      const strip = document.getElementById("photoPreviewStrip");
+      strip.innerHTML = "";
+      if (!input || !input.files || !input.files.length) return;
+
+      Array.from(input.files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const box = document.createElement("div");
+          box.className = "preview-thumb";
+          const img = document.createElement("img");
+          img.src = ev.target.result;
+          img.alt = file.name;
+          const cap = document.createElement("div");
+          cap.className = "sub";
+          cap.textContent = file.name;
+          box.appendChild(img);
+          box.appendChild(cap);
+          strip.appendChild(box);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function setSectionStatus(sectionId, statusVal) {
+      const sec = document.getElementById(sectionId);
+      if (!sec) return;
+      sec.querySelectorAll("select.item-status-select").forEach((sel) => {
+        sel.value = statusVal;
+      });
+      recalculateLiveSummary();
+      saveDraftToLocal();
+    }
+
+    function setAllItemsStatus(statusVal) {
+      document.querySelectorAll("select.item-status-select").forEach((sel) => {
+        sel.value = statusVal;
+      });
+      recalculateLiveSummary();
+      saveDraftToLocal();
+    }
+
+    function toggleSingleSection(sectionId) {
+      const sec = document.getElementById(sectionId);
+      if (!sec) return;
+      const body = sec.querySelector(".section-body");
+      if (body) body.classList.toggle("hidden");
+    }
+
+    function toggleAllSections(expand) {
+      document.querySelectorAll(".section-block .section-body").forEach((body) => {
+        if (expand) body.classList.remove("hidden");
+        else body.classList.add("hidden");
+      });
+    }
+
+    function recalculateLiveSummary() {
+      const rows = document.querySelectorAll("tr.checklist-row");
+      let totalWeight = 0;
+      let earnedWeight = 0;
+      let nonCompliant = 0;
+      let criticalViolations = 0;
+      let majorViolations = 0;
+
+      rows.forEach((row) => {
+        const weight = parseFloat(row.getAttribute("data-weight") || "0") || 0;
+        const severity = (row.getAttribute("data-severity") || "").toUpperCase();
+        const selectEl = row.querySelector("select.item-status-select");
+        const status = selectEl ? selectEl.value : "COMPLIANT";
+
+        if (status === "NOT_APPLICABLE") return;
+        totalWeight += weight;
+        if (status === "COMPLIANT") {
+          earnedWeight += weight;
+        } else if (status === "PARTIALLY_COMPLIANT") {
+          earnedWeight += weight * 0.5;
+        } else if (status === "NON_COMPLIANT") {
+          nonCompliant += 1;
+          if (severity === "CRITICAL") criticalViolations += 1;
+          if (severity === "MAJOR") majorViolations += 1;
+        }
+      });
+
+      const score = totalWeight > 0 ? Math.round((earnedWeight / totalWeight) * 10000) / 100 : 100;
+      let outcome = "مطابق — استيفاء المتطلبات الصحية المعتمدة";
+      let riskLevel = "LOW";
+      let riskScore = Math.max(5, nonCompliant * 3);
+
+      if (criticalViolations > 0 || score < 50) {
+        outcome = "غير مطابق — إيقاف/إنذار فوري وإحالة مشددة";
+        riskLevel = "CRITICAL";
+        riskScore = Math.min(100, 75 + criticalViolations * 10 + nonCompliant * 2);
+      } else if (score < 75 || majorViolations > 0) {
+        outcome = "مطابق جزئياً مشروط — مهلة تصحيحية (CAPA)";
+        riskLevel = "HIGH";
+        riskScore = Math.min(74, 45 + majorViolations * 8 + nonCompliant * 3);
+      } else if (score < 90) {
+        outcome = "مطابق بملحوظات — متابعة دورية";
+        riskLevel = "MEDIUM";
+        riskScore = Math.min(44, 20 + nonCompliant * 4);
+      }
+
+      document.getElementById("liveScore").textContent = score + "%";
+      document.getElementById("liveRisk").textContent = riskScore + " / 100 (" + riskLevel + ")";
+      document.getElementById("liveNonComp").textContent = nonCompliant + " / " + criticalViolations + " حرج";
+      document.getElementById("liveOutcome").textContent = outcome;
+    }
+
+    function initSignaturePad(canvasId, textInputId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      let drawing = false;
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width || 300;
+        canvas.height = rect.height || 112;
+        ctx.lineWidth = 2;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = "#0f172a";
+      }
+      resizeCanvas();
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+      }
+
+      canvas.addEventListener("pointerdown", (e) => {
+        drawing = true;
+        const p = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+      });
+      canvas.addEventListener("pointermove", (e) => {
+        if (!drawing) return;
+        const p = getPos(e);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      });
+      window.addEventListener("pointerup", () => {
+        if (!drawing) return;
+        drawing = false;
+        const inp = document.getElementById(textInputId);
+        if (inp && !inp.value.trim()) {
+          inp.value = "توقيع رقمي مرسوم (" + new Date().toLocaleTimeString() + ")";
+        }
+        saveDraftToLocal();
+      });
+    }
+
+    function clearPad(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function resetInspectionForm() {
+      const form = document.getElementById("inspectionForm");
+      if (!form) return;
+      try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch (e) {}
+      form.reset();
+      toggleEstablishmentMode();
+      updateMapLink();
+      document.getElementById("photoPreviewStrip").innerHTML = "";
+      clearPad("inspectorPad");
+      clearPad("repPad");
+      recalculateLiveSummary();
+      const st = document.getElementById("draftStatusText");
+      if (st) st.textContent = "تم المسح";
+    }
+
+    function updateNetworkStatus() {
+      const online = navigator.onLine;
+      const el = document.getElementById("netStatusText");
+      if (!el) return;
+      el.textContent = online ? "متصل" : "غير متصل (حفظ محلي نشط)";
+      el.style.color = online ? "#047857" : "#b91c1c";
+    }
+
+    function saveDraftToLocal() {
+      const form = document.getElementById("inspectionForm");
+      if (!form) return;
+      const data = {};
+      form.querySelectorAll("input, select, textarea").forEach((el) => {
+        if (!el.name || el.type === "file" || el.name === "csrfmiddlewaretoken") return;
+        data[el.name] = el.value;
+      });
+      try {
+        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify({ savedAt: new Date().toLocaleTimeString(), data }));
+        const st = document.getElementById("draftStatusText");
+        if (st) st.textContent = "حُفظت " + new Date().toLocaleTimeString();
+      } catch (e) {}
+    }
+
+    function restoreDraftFromLocal() {
+      try {
+        const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.data) return;
+        const form = document.getElementById("inspectionForm");
+        if (!form) return;
+        Object.entries(parsed.data).forEach(([name, val]) => {
+          const el = form.elements.namedItem(name);
+          if (el && el.type !== "file" && name !== "csrfmiddlewaretoken") {
+            el.value = val;
+          }
+        });
+        toggleEstablishmentMode();
+        updateMapLink();
+        recalculateLiveSummary();
+        const st = document.getElementById("draftStatusText");
+        if (st && parsed.savedAt) st.textContent = "مستعادة (" + parsed.savedAt + ")";
+      } catch (e) {}
+    }
+
+    const inspForm = document.getElementById("inspectionForm");
+    if (inspForm) {
+      inspForm.addEventListener("input", saveDraftToLocal);
+      inspForm.addEventListener("change", saveDraftToLocal);
+      inspForm.addEventListener("submit", () => {
+        try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch (e) {}
+      });
+    }
+
+    window.addEventListener("online", updateNetworkStatus);
+    window.addEventListener("offline", updateNetworkStatus);
+
+    toggleEstablishmentMode();
+    recalculateLiveSummary();
+    initSignaturePad("inspectorPad", "inspector_signature");
+    initSignaturePad("repPad", "representative_signature");
+    updateNetworkStatus();
+    restoreDraftFromLocal();
+  </script>
+</body>
+</html>

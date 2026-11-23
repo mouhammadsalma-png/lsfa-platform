@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تسجيل الدخول — منصة سلامة الغذاء LSFA</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0f4c81;
+      --primary-hover: #0b3961;
+      --danger-bg: #fef2f2;
+      --danger-text: #b91c1c;
+      --radius: 14px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 10px 28px rgba(15, 23, 42, 0.07);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      background: linear-gradient(135deg, #0b2545 0%, #0f4c81 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .brand h1 { margin: 0; font-size: 18px; font-weight: 700; }
+    .brand p { margin: 4px 0 0; font-size: 12.5px; color: rgba(255, 255, 255, 0.85); }
+
+    .field { margin-bottom: 14px; }
+    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #334155; }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+
+    button {
+      width: 100%;
+      padding: 11px 16px;
+      border: none;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { background: var(--primary-hover); }
+
+    .error-box {
+      background: var(--danger-bg);
+      border: 1px solid #fecaca;
+      color: var(--danger-text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .footer-links {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 12.5px;
+    }
+    .footer-links a { color: var(--primary); text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="brand">
+      <h1>الهيئة اللبنانية لسلامة الغذاء — LSFA</h1>
+      <p>تسجيل الدخول وتحديد الدور الوظيفي (مفتش / إدارة)</p>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="error-box">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      {% if next %}
+        <input type="hidden" name="next" value="{{ next }}" />
+      {% endif %}
+
+      <div class="field">
+        <label for="role">الدور الوظيفي</label>
+        <select id="role" name="role">
+          <option value="inspector" {% if selected_role == "inspector" %}selected{% endif %}>مفتش (التفتيش والمتابعة)</option>
+          <option value="admin" {% if selected_role == "admin" %}selected{% endif %}>إدارة (المؤشرات والمحافظات والأقضية والخريطة)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="username">اسم المستخدم</label>
+        <input type="text" id="username" name="username" value="{{ username|default:'' }}" required autofocus />
+      </div>
+
+      <div class="field">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" name="password" required />
+      </div>
+
+      <button type="submit">دخول إلى المنصة</button>
+    </form>
+
+    <div class="footer-links">
+      <a href="/">العودة إلى البوابة المركزية</a>
+    </div>
+  </div>
+</body>
+</html>

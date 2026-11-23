@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دخول المراقب — الهيئة اللبنانية لسلامة الغذاء (LSFA)</title>
+  <style>
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+    body { margin: 0; background: #0f2942; color: #102a43; display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 16px; }
+    .card { width: 100%; max-width: 420px; background: #fff; border-radius: 14px; padding: 28px; box-shadow: 0 18px 40px rgba(0,0,0,.25); }
+    .badge { display: inline-block; background: #e6f4ea; color: #137333; font-weight: 700; font-size: 12px; padding: 4px 10px; border-radius: 999px; margin-bottom: 10px; }
+    h1 { margin: 0 0 6px; font-size: 20px; }
+    p.sub { margin: 0 0 20px; color: #486581; font-size: 13px; }
+    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    input { width: 100%; padding: 11px 12px; border: 1px solid #bcccdc; border-radius: 8px; margin-bottom: 14px; font-size: 14px; }
+    button { width: 100%; padding: 12px; background: #0f5132; color: #fff; border: 0; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; }
+    button:hover { background: #0b3d26; }
+    .err { background: #fdecea; color: #b71c1c; padding: 10px 12px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; }
+    .switch { margin-top: 16px; text-align: center; font-size: 13px; }
+    .switch a { color: #0f5132; font-weight: 700; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">LSFA • مسار المراقب الميداني</span>
+    {% if mode == "register" %}
+      <h1>تسجيل حساب مراقب جديد</h1>
+      <p class="sub">يُخصّص الحساب مباشرةً لواجهة تقرير الكشف الميداني.</p>
+      {% if error %}<div class="err">{{ error }}</div>{% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <label for="full_name">الاسم الكامل للمراقب</label>
+        <input id="full_name" type="text" name="full_name" required placeholder="مثال: م. محمد قانصو">
+        <label for="username">اسم المستخدم</label>
+        <input id="username" type="text" name="username" required autocomplete="username">
+        <label for="password">كلمة المرور</label>
+        <input id="password" type="password" name="password" required autocomplete="new-password">
+        <button type="submit">إنشاء الحساب وفتح تقرير الكشف</button>
+      </form>
+      <div class="switch">لديك حساب بالفعل؟ <a href="{% url 'food_safety:inspector_login' %}">تسجيل الدخول</a></div>
+    {% else %}
+      <h1>دخول المراقب الميداني</h1>
+      <p class="sub">بعد الدخول ستُفتح شاشة تقرير الكشف الميداني مباشرةً.</p>
+      {% if error %}<div class="err">{{ error }}</div>{% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <label for="username">اسم المستخدم</label>
+        <input id="username" type="text" name="username" required autocomplete="username">
+        <label for="password">كلمة المرور</label>
+        <input id="password" type="password" name="password" required autocomplete="current-password">
+        <button type="submit">دخول إلى تقرير الكشف</button>
+      </form>
+      <div class="switch">مراقب جديد؟ <a href="{% url 'food_safety:inspector_register' %}">تسجيل حساب مراقب</a></div>
+    {% endif %}
+  </div>
+</body>
+</html>

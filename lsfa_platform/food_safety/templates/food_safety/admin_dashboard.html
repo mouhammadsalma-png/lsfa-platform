@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة الإدارة والرقابة الجغرافية — LSFA</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0f4c81;
+      --primary-hover: #0b3961;
+      --danger-bg: #fef2f2;
+      --danger-text: #b91c1c;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 6px 18px rgba(15, 23, 42, 0.04);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      margin: 0;
+      padding: 20px 18px 48px;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .container { max-width: 1320px; margin: 0 auto; }
+
+    .topbar {
+      background: linear-gradient(135deg, #0b2545 0%, #0f4c81 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .topbar h1 { margin: 0; font-size: 20px; font-weight: 700; }
+    .topbar-meta { font-size: 12.5px; color: rgba(255, 255, 255, 0.85); margin-top: 4px; }
+
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+    .nav-link:hover { background: rgba(255, 255, 255, 0.24); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+    .kpi-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .kpi-value { font-size: 22px; font-weight: 700; margin-top: 4px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+    .card-title { margin: 0 0 14px; font-size: 16px; font-weight: 700; }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+    label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 12.5px; color: #334155; }
+    select {
+      width: 100%;
+      padding: 8px 11px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+    }
+
+    button, .btn-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-light { background: var(--surface-subtle); color: var(--text); border-color: var(--border-strong); }
+
+    .two-charts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    #lebanonMap {
+      height: 430px;
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      z-index: 1;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 780px; }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      text-align: right;
+      font-size: 13px;
+    }
+    th { background: var(--surface-subtle); font-weight: 700; color: #334155; }
+    tr:last-child td { border-bottom: none; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--surface-subtle);
+    }
+    .crit { background: var(--danger-bg); color: var(--danger-text); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div>
+        <h1>لوحة الإدارة والرقابة الشاملة — LSFA</h1>
+        <div class="topbar-meta">
+          المسؤول: <strong>{{ current_user_display }}</strong> · التوقيت: <strong>{{ now_display }}</strong> · متابعة الكشف والمخالفات حسب المحافظات والأقضية
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="/" class="nav-link">البوابة الرئيسية</a>
+        <a href="/field/" class="nav-link">نظام التفتيش</a>
+        <a href="/followups/" class="nav-link">المتابعة (CAPA)</a>
+        <a href="/admin/" class="nav-link">Django Admin</a>
+        <a href="/logout/" class="nav-link">تسجيل الخروج</a>
+      </nav>
+    </header>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">زيارات الكشف (حسب الفلتر)</div>
+        <div class="kpi-value">{{ total_filtered_visits }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">إجمالي المخالفات</div>
+        <div class="kpi-value" style="color: var(--danger-text);">{{ total_filtered_violations }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">مخالفات غير مغلقة</div>
+        <div class="kpi-value" style="color: var(--danger-text);">{{ total_filtered_unclosed }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">مخالفات حرجة (CRITICAL)</div>
+        <div class="kpi-value" style="color: var(--danger-text);">{{ severity_totals.CRITICAL }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">مناطق (محافظة/قضاء)</div>
+        <div class="kpi-value">{{ geo_rows|length }}</div>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2 class="card-title">تصفية حسب المحافظة والقضاء</h2>
+      <form method="get" class="filter-grid">
+        <div>
+          <label for="governorate">المحافظة</label>
+          <select id="governorate" name="governorate" onchange="this.form.submit()">
+            <option value="">جميع المحافظات</option>
+            {% for g in all_governorates %}
+              <option value="{{ g }}" {% if g == gov_filter %}selected{% endif %}>{{ g }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label for="district">القضاء</label>
+          <select id="district" name="district" onchange="this.form.submit()">
+            <option value="">جميع الأقضية</option>
+            {% for d in all_districts %}
+              <option value="{{ d }}" {% if d == dist_filter %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="submit" class="btn-primary">تطبيق</button>
+          <a href="/admin-dashboard/" class="btn-link btn-light">إعادة ضبط</a>
+        </div>
+      </form>
+    </section>
+
+    <div class="two-charts">
+      <section class="card" style="margin-bottom: 0;">
+        <h2 class="card-title">الزيارات والمخالفات حسب المحافظة</h2>
+        <canvas id="govBarChart" height="210"></canvas>
+      </section>
+
+      <section class="card" style="margin-bottom: 0;">
+        <h2 class="card-title">توزيع المخالفات حسب الخطورة</h2>
+        <canvas id="sevDoughnutChart" height="210"></canvas>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2 class="card-title">خريطة لبنان — توزيع الكشف والمخالفات الجغرافية</h2>
+      <div id="lebanonMap"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">جدول متابعة أمور الكشف والمخالفات حسب المحافظات والأقضية</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>المحافظة</th>
+              <th>القضاء</th>
+              <th>زيارات الكشف</th>
+              <th>إجمالي المخالفات</th>
+              <th>غير مغلقة</th>
+              <th>حرجة</th>
+              <th>متوسط الامتثال</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in geo_rows %}
+              <tr>
+                <td><strong>{{ r.governorate }}</strong></td>
+                <td>{{ r.district }}</td>
+                <td>{{ r.visits_count }}</td>
+                <td><strong>{{ r.violations_count }}</strong></td>
+                <td><span class="badge crit">{{ r.unclosed_count }}</span></td>
+                <td>{{ r.critical_count }}</td>
+                <td>{% if r.avg_compliance is not None %}{{ r.avg_compliance }}%{% else %}—{% endif %}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 20px; color: var(--muted);">
+                  لا توجد بيانات جغرافية مطابقة للفلتر الحالي.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const payload = {{ chart_payload_json|safe }};
+
+    const barCtx = document.getElementById("govBarChart");
+    if (barCtx) {
+      new Chart(barCtx, {
+        type: "bar",
+        data: {
+          labels: payload.gov_labels,
+          datasets: [
+            { label: "زيارات الكشف", data: payload.gov_visits, backgroundColor: "#0f4c81" },
+            { label: "المخالفات", data: payload.gov_violations, backgroundColor: "#b91c1c" },
+            { label: "غير مغلقة", data: payload.gov_unclosed, backgroundColor: "#d97706" }
+          ]
+        },
+        options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+      });
+    }
+
+    const sevCtx = document.getElementById("sevDoughnutChart");
+    if (sevCtx) {
+      new Chart(sevCtx, {
+        type: "doughnut",
+        data: {
+          labels: payload.severity_labels,
+          datasets: [{
+            data: payload.severity_values,
+            backgroundColor: ["#b91c1c", "#d97706", "#1d4ed8", "#047857"]
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+      });
+    }
+
+    const mapEl = document.getElementById("lebanonMap");
+    if (mapEl && typeof L !== "undefined") {
+      const map = L.map("lebanonMap").setView([33.8547, 35.8623], 8);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(map);
+
+      (payload.map_points || []).forEach((pt) => {
+        if (typeof pt.lat !== "number" || typeof pt.lng !== "number") return;
+        const popupHtml = `
+          <div style="direction: rtl; text-align: right; font-family: Tahoma, sans-serif;">
+            <strong>${pt.governorate} — ${pt.district}</strong><br/>
+            زيارات الكشف: <strong>${pt.visits}</strong><br/>
+            إجمالي المخالفات: <strong>${pt.violations}</strong><br/>
+            غير مغلقة: <strong style="color:#b91c1c;">${pt.unclosed}</strong>
+          </div>
+        `;
+        L.circleMarker([pt.lat, pt.lng], {
+          radius: Math.min(22, Math.max(8, 7 + (pt.violations || 0) * 2)),
+          color: "#0b2545",
+          weight: 2,
+          fillColor: (pt.unclosed || 0) > 0 ? "#b91c1c" : "#0f4c81",
+          fillOpacity: 0.78
+        }).addTo(map).bindPopup(popupHtml);
+      });
+    }
+  </script>
+</body>
+</html>

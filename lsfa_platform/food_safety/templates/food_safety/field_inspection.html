@@ -1,0 +1,787 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقرير الكشف الميداني — الهيئة اللبنانية لسلامة الغذاء (LSFA)</title>
+  <style>
+    :root {
+      --navy: #0f2942;
+      --green: #0f5132;
+      --red: #b42318;
+      --amber: #b54708;
+      --bg: #f4f7fa;
+      --border: #d0d7de;
+    }
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+    body { margin: 0; background: var(--bg); color: #102a43; }
+    header.topbar {
+      background: var(--navy);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .topbar-title { font-weight: 700; font-size: 16px; }
+    .topbar-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 13px; }
+    .pill { background: rgba(255,255,255,.14); padding: 4px 10px; border-radius: 999px; }
+    .btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:disabled { opacity: .65; cursor: not-allowed; }
+    .btn-secondary { background: #e4e7eb; color: #102a43; }
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.45);
+      text-decoration: none;
+      display: inline-block;
+    }
+    .container { max-width: 1180px; margin: 20px auto; padding: 0 14px 40px; }
+    .panel {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 16px;
+      color: var(--navy);
+      border-bottom: 1px solid #eef2f6;
+      padding-bottom: 8px;
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+    label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #bcccdc;
+      border-radius: 8px;
+      font-size: 13px;
+      background: #fff;
+    }
+    .gps-box {
+      background: #f0f7ff;
+      border: 1px solid #b9d7f5;
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .axis-block { margin-bottom: 18px; }
+    .axis-title {
+      background: #eef3f8;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 860px; }
+    th, td { border: 1px solid var(--border); padding: 9px 10px; text-align: right; vertical-align: top; }
+    th { background: #f8fafc; font-weight: 700; color: var(--navy); }
+    .q-title { font-weight: 700; color: #102a43; margin-bottom: 4px; font-size: 13.5px; }
+    .q-meta { font-size: 12px; color: #334e68; line-height: 1.55; margin-top: 2px; }
+    .choice-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .choice-btn {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .choice-btn.active-ok { background: #dcfce7; border-color: #16a34a; color: #14532d; }
+    .choice-btn.active-bad { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+    .sev-tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .sev-CRITICAL { background: #fee2e2; color: #991b1b; }
+    .sev-MAJOR { background: #fef3c7; color: #92400e; }
+    .sev-MINOR { background: #e0f2fe; color: #075985; }
+    .risk-banner { border-radius: 10px; padding: 14px 16px; border: 1px solid var(--border); background: #f8fafc; line-height: 1.75; }
+    .risk-CRITICAL { background: #fef2f2; border-color: #ef4444; color: #7f1d1d; }
+    .risk-HIGH { background: #fffbeb; border-color: #f59e0b; color: #78350f; }
+    .risk-MEDIUM { background: #eff6ff; border-color: #3b82f6; color: #1e3a8a; }
+    .risk-LOW { background: #f0fdf4; border-color: #22c55e; color: #14532d; }
+    .sig-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 16px; }
+    canvas.sig-pad {
+      width: 100%;
+      max-width: 460px;
+      height: 145px;
+      border: 1.5px dashed #94a3b8;
+      border-radius: 8px;
+      background: #fff;
+      touch-action: none;
+      display: block;
+    }
+    .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .thumbs img { width: 96px; height: 96px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+    .actions-bar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+    .status-msg { margin-top: 10px; font-size: 13px; font-weight: 700; }
+
+    @media print {
+      header.topbar, .no-print, .choice-group button:not(.active-ok):not(.active-bad) { display: none !important; }
+      body { background: #fff; }
+      .container { max-width: 100%; margin: 0; padding: 0; }
+      .table-wrap { overflow: visible; }
+      table { min-width: 0; }
+      .panel { border: 1px solid #cbd5e1; break-inside: avoid; box-shadow: none; }
+      tr { break-inside: avoid; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-title">الهيئة اللبنانية لسلامة الغذاء (LSFA) — تقرير الكشف الميداني</div>
+    <div class="topbar-meta">
+      <span class="pill">المراقب: {{ inspector_name }}</span>
+      <span class="pill" id="net-status">جاري التحقق من الاتصال...</span>
+      <span class="pill" id="queue-badge">المعلقة للمزامنة: 0</span>
+      <button type="button" class="btn btn-secondary no-print" onclick="window.print()">طباعة / تصدير PDF</button>
+      <a class="btn btn-outline no-print" href="{% url 'food_safety:inspector_logout' %}">خروج</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h2>1. بيانات المؤسسة ونوع الكشف وتحديد الموقع (GPS)</h2>
+      <div class="grid-2">
+        <div>
+          <label for="est-name">اسم المؤسسة / الشركة (عربي)</label>
+          <input type="text" id="est-name" list="est-suggestions" placeholder="اكتب اسم المؤسسة (يُصدر لها معرّف ثابت وتُسجل تلقائياً)">
+          <datalist id="est-suggestions"></datalist>
+          <small id="est-code-preview" style="color:#0f5132;font-weight:700;display:block;margin-top:5px;">
+            المعرّف الثابت: سيُصدر أو يُربط تلقائياً عند الحفظ
+          </small>
+          <div id="est-history-banner" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;background:#f8fafc;border:1px solid #cbd5e1;font-size:12.5px;"></div>
+        </div>
+        <div>
+          <label for="sector-select">نوع المؤسسة / الاستمارة القطاعية</label>
+          <select id="sector-select"></select>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:14px;">
+        <div>
+          <label for="est-gov">المحافظة</label>
+          <select id="est-gov">
+            <option value="محافظة بيروت">محافظة بيروت</option>
+            <option value="محافظة جبل لبنان">محافظة جبل لبنان</option>
+            <option value="محافظة الشمال">محافظة الشمال</option>
+            <option value="محافظة عكار">محافظة عكار</option>
+            <option value="محافظة البقاع">محافظة البقاع</option>
+            <option value="محافظة بعلبك - الهرمل">محافظة بعلبك - الهرمل</option>
+            <option value="محافظة الجنوب">محافظة الجنوب</option>
+            <option value="محافظة النبطية">محافظة النبطية</option>
+            <option value="محافظة كسروان - جبيل">محافظة كسروان - جبيل</option>
+          </select>
+        </div>
+        <div>
+          <label for="est-dist">القضاء / المنطقة</label>
+          <input type="text" id="est-dist" list="gov-districts" placeholder="اختر أو اكتب القضاء أو المنطقة">
+          <datalist id="gov-districts"></datalist>
+        </div>
+        <div>
+          <label for="est-rep">الممثل / المسؤول الحاضر أثناء الكشف</label>
+          <input type="text" id="est-rep" placeholder="اسم المدير أو المسؤول الميداني">
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <label for="est-addr">العنوان التفصيلي للموقع</label>
+        <input type="text" id="est-addr" placeholder="الشارع، المبنى، أو المعلم المرجعي">
+      </div>
+
+      <div class="gps-box" style="margin-top:14px;">
+        <div id="gps-readout">جاري التقاط إحداثيات GPS تلقائياً...</div>
+        <button type="button" class="btn btn-secondary no-print" onclick="captureGPS()">تحديث GPS الآن</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>2. جدول الكشف (البند وماذا يبحث المراقب عنه)</h2>
+      <div id="checklist-container"></div>
+    </section>
+
+    <section class="panel">
+      <h2>3. تحليل مدى الخطورة والقرار الرقابي (وفق المعايير الدولية)</h2>
+      <div id="risk-box" class="risk-banner risk-LOW"></div>
+    </section>
+
+    <section class="panel">
+      <h2>4. الصور والملاحظات والتوقيع الرقمي</h2>
+      <div class="grid-2">
+        <div>
+          <label for="evidence-input">إرفاق صور الأدلة الميدانية</label>
+          <input type="file" id="evidence-input" accept="image/*" capture="environment" multiple>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
+        <div>
+          <label for="general-notes">ملاحظات عامة وتوصيات المراقب</label>
+          <textarea id="general-notes" rows="4" placeholder="دوّن الملاحظات الميدانية والإجراءات المطلوبة..."></textarea>
+        </div>
+      </div>
+
+      <div class="sig-grid">
+        <div>
+          <label>توقيع المراقب الرقمي</label>
+          <canvas id="sig-inspector" class="sig-pad" width="460" height="145"></canvas>
+          <div class="no-print" style="margin-top:8px;">
+            <button type="button" class="btn btn-secondary" onclick="clearPad('sig-inspector')">مسح توقيع المراقب</button>
+          </div>
+        </div>
+        <div>
+          <label>توقيع ممثل / مسؤول المؤسسة (إن وُجد)</label>
+          <canvas id="sig-rep" class="sig-pad" width="460" height="145"></canvas>
+          <div class="no-print" style="margin-top:8px;">
+            <button type="button" class="btn btn-secondary" onclick="clearPad('sig-rep')">مسح توقيع الممثل</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-bar no-print">
+        <button type="button" class="btn btn-secondary" onclick="window.print()">طباعة / حفظ PDF</button>
+        <button type="button" class="btn btn-primary" id="submit-btn" onclick="submitInspection()">إرسال واعتماد الكشف</button>
+      </div>
+      <div id="submit-status" class="status-msg"></div>
+    </section>
+  </main>
+
+  <script>
+    const CACHE_TEMPLATES_KEY = "lsfa_cached_templates_v1";
+    const CACHE_EST_KEY = "lsfa_cached_establishments_v1";
+
+    const GOV_DISTRICTS = {
+      "محافظة بيروت": ["بيروت", "الأشرفية", "الحمراء", "رأس بيروت", "المزرعة", "الرميلة", "المدور / مار مخايل", "الصيفي", "المصيطبة", "زقاق البلاط", "الباشورة", "ميناء الحصن", "دار المريسة"],
+      "محافظة جبل لبنان": ["بعبدا", "المتن", "الشوف", "عاليه"],
+      "محافظة كسروان - جبيل": ["كسروان", "جبيل"],
+      "محافظة الشمال": ["طرابلس", "الكورة", "زغرتا", "البترون", "بشري", "المنية - الضنية"],
+      "محافظة عكار": ["عكار"],
+      "محافظة البقاع": ["زحلة", "البقاع الغربي", "راشيا"],
+      "محافظة بعلبك - الهرمل": ["بعلبك", "الهرمل"],
+      "محافظة الجنوب": ["صيدا", "صور", "جزين"],
+      "محافظة النبطية": ["النبطية", "مرجعيون", "حاصبيا", "بنت جبيل"]
+    };
+
+    const govSelect = document.getElementById("est-gov");
+    const distDatalist = document.getElementById("gov-districts");
+
+    function updateDistrictOptions() {
+      const gov = govSelect.value;
+      const list = GOV_DISTRICTS[gov] || [];
+      distDatalist.innerHTML = "";
+      list.forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d;
+        distDatalist.appendChild(opt);
+      });
+    }
+
+    govSelect.addEventListener("change", updateDistrictOptions);
+    updateDistrictOptions();
+
+    function loadCachedJson(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {}
+      return fallback;
+    }
+
+    const serverTemplates = {{ templates_json|safe }};
+    const serverEstablishments = {{ establishments_json|safe }};
+
+    if (Array.isArray(serverTemplates) && serverTemplates.length > 0) {
+      try { localStorage.setItem(CACHE_TEMPLATES_KEY, JSON.stringify(serverTemplates)); } catch (e) {}
+    }
+    if (Array.isArray(serverEstablishments) && serverEstablishments.length > 0) {
+      try { localStorage.setItem(CACHE_EST_KEY, JSON.stringify(serverEstablishments)); } catch (e) {}
+    }
+
+    const TEMPLATES = loadCachedJson(CACHE_TEMPLATES_KEY, serverTemplates || []);
+    const EXISTING_EST = loadCachedJson(CACHE_EST_KEY, serverEstablishments || []);
+    const CSRF_TOKEN = "{{ csrf_token }}";
+
+    const sigState = {
+      "sig-inspector": { dirty: false },
+      "sig-rep": { dirty: false }
+    };
+
+    const state = {
+      gps: { lat: null, lng: null, accuracy: null, timestamp: null },
+      answers: {},
+      images: [],
+      risk: { risk_code: "LOW", compliance_pct: 100, decision: "" }
+    };
+
+    const sectorSelect = document.getElementById("sector-select");
+    TEMPLATES.forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t.code;
+      opt.textContent = `${t.code} — ${t.title}`;
+      sectorSelect.appendChild(opt);
+    });
+
+    function normalizeAr(s) {
+      return (s || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[إأآا]/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/[\u064B-\u065F\u0670]/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    function rebuildSuggestions() {
+      const dl = document.getElementById("est-suggestions");
+      dl.innerHTML = "";
+      EXISTING_EST.forEach(e => {
+        const opt = document.createElement("option");
+        opt.value = e.name_ar;
+        const codeLabel = e.permanent_code || e.code || "";
+        opt.label = codeLabel ? `معرّف ثابت: ${codeLabel}` : "";
+        dl.appendChild(opt);
+      });
+    }
+
+    rebuildSuggestions();
+
+    document.getElementById("est-name").addEventListener("input", (e) => {
+      const norm = normalizeAr(e.target.value);
+      const match = EXISTING_EST.find(item => (item.normalized_name_ar || normalizeAr(item.name_ar)) === norm);
+      const preview = document.getElementById("est-code-preview");
+      const histBanner = document.getElementById("est-history-banner");
+      const permCode = match ? (match.permanent_code || match.code) : null;
+      if (permCode) {
+        preview.textContent = `مؤسسة مسجلة — المعرّف الثابت: ${permCode}`;
+        if (match.governorate && Array.from(govSelect.options).some(o => o.value === match.governorate)) {
+          govSelect.value = match.governorate;
+          updateDistrictOptions();
+        }
+        if (match.district && !document.getElementById("est-dist").value) document.getElementById("est-dist").value = match.district;
+        if (match.address && !document.getElementById("est-addr").value) document.getElementById("est-addr").value = match.address;
+        const vCount = match.visits_count || 0;
+        const openV = match.open_violations_count || 0;
+        const lastRisk = match.last_risk_level || "LOW";
+        histBanner.style.display = "block";
+        histBanner.innerHTML = `<strong>سجل المؤسسة:</strong> عدد الكشوف السابقة: <code>${vCount}</code> | آخر مستوى خطورة: <code>${lastRisk}</code> | مخالفات مفتوحة: <code>${openV}</code>`;
+      } else if (e.target.value.trim()) {
+        preview.textContent = "مؤسسة جديدة — سيُصدر لها معرّف ثابت وتُسجل تلقائياً في قاعدة البيانات";
+        histBanner.style.display = "none";
+        histBanner.innerHTML = "";
+      } else {
+        preview.textContent = "المعرّف الثابت: سيُصدر أو يُربط تلقائياً عند الحفظ";
+        histBanner.style.display = "none";
+        histBanner.innerHTML = "";
+      }
+    });
+
+    function captureGPS() {
+      const readout = document.getElementById("gps-readout");
+      if (!navigator.geolocation) {
+        readout.textContent = "المتصفح لا يدعم GPS.";
+        return;
+      }
+      readout.textContent = "جاري تحديد الموقع الجغرافي...";
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          state.gps = {
+            lat: Number(pos.coords.latitude.toFixed(6)),
+            lng: Number(pos.coords.longitude.toFixed(6)),
+            accuracy: Math.round(pos.coords.accuracy),
+            timestamp: new Date(pos.timestamp).toISOString()
+          };
+          readout.innerHTML = `<strong>GPS محدد تلقائياً:</strong> خط العرض <code>${state.gps.lat}</code> | خط الطول <code>${state.gps.lng}</code> | الدقة: ±${state.gps.accuracy} م`;
+        },
+        (err) => {
+          readout.textContent = `تعذّر التقاط GPS تلقائياً (${err.message}). اضغط تحديث GPS الآن.`;
+        },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      );
+    }
+
+    function renderChecklist() {
+      const code = sectorSelect.value;
+      const tpl = TEMPLATES.find(t => t.code === code) || TEMPLATES[0];
+      const container = document.getElementById("checklist-container");
+      container.innerHTML = "";
+      state.answers = {};
+
+      if (!tpl) return;
+
+      tpl.axes.forEach(ax => {
+        const block = document.createElement("div");
+        block.className = "axis-block";
+        block.innerHTML = `<div class="axis-title">${ax.title}</div>`;
+
+        const wrap = document.createElement("div");
+        wrap.className = "table-wrap";
+
+        const table = document.createElement("table");
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th style="width:36%;">البند وماذا يبحث المراقب عنه</th>
+              <th style="width:10%;">الخطورة</th>
+              <th style="width:15%;">مطابق أم لا</th>
+              <th style="width:15%;">قياس / رقم</th>
+              <th style="width:24%;">ملاحظة / متابعة</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        `;
+        const tbody = table.querySelector("tbody");
+
+        ax.questions.forEach(q => {
+          state.answers[q.id] = {
+            question_id: q.id,
+            db_id: q.db_id || null,
+            question_text: q.text,
+            axis_title: ax.title,
+            severity: q.severity,
+            weight: q.weight,
+            status: "COMPLIANT",
+            measurement: "",
+            note: "",
+            followup: ""
+          };
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>
+              <div class="q-title">${q.text}</div>
+              <div class="q-meta"><strong>ابحث عن:</strong> ${q.criteria || "-"}</div>
+              <div class="q-meta"><strong>طريقة الفحص:</strong> ${q.proof || "-"}</div>
+            </td>
+            <td><span class="sev-tag sev-${q.severity}">${q.severity}</span><div class="q-meta" style="margin-top:4px;">الوزن: ${q.weight}</div></td>
+            <td>
+              <div class="choice-group">
+                <button type="button" class="choice-btn active-ok" data-qid="${q.id}" data-val="COMPLIANT" onclick="setAnswer(this)">مطابق</button>
+                <button type="button" class="choice-btn" data-qid="${q.id}" data-val="NON_COMPLIANT" onclick="setAnswer(this)">غير مطابق</button>
+              </div>
+            </td>
+            <td>
+              <input type="text" placeholder="مثال: +2.5°م أو دفعة #14" onchange="setMeasurement('${q.id}', this.value)">
+            </td>
+            <td>
+              <input type="text" placeholder="ماذا لاحظت ميدانياً؟" onchange="setNote('${q.id}', this.value)">
+              <select style="margin-top:6px;" onchange="setFollowup('${q.id}', this.value)">
+                <option value="">مسار لاحق (تلقائي حسب الخطورة)</option>
+                <option value="CAPA">خطة تصحيحية CAPA</option>
+                <option value="REINSPECTION">إعادة تفتيش</option>
+                <option value="LAB_SAMPLE">سحب عينة مخبرية</option>
+                <option value="REFERRAL">إحالة رقابية / إغلاق احترازي</option>
+              </select>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        wrap.appendChild(table);
+        block.appendChild(wrap);
+        container.appendChild(block);
+      });
+
+      evaluateRisk();
+    }
+
+    function setAnswer(btn) {
+      const qid = btn.dataset.qid;
+      const val = btn.dataset.val;
+      state.answers[qid].status = val;
+      const group = btn.parentElement;
+      group.querySelectorAll("button").forEach(b => b.classList.remove("active-ok", "active-bad"));
+      if (val === "COMPLIANT") btn.classList.add("active-ok");
+      else btn.classList.add("active-bad");
+      evaluateRisk();
+    }
+
+    function setMeasurement(qid, val) { state.answers[qid].measurement = val; }
+    function setNote(qid, val) { state.answers[qid].note = val; }
+    function setFollowup(qid, val) { state.answers[qid].followup = val; }
+
+    function evaluateRisk() {
+      const items = Object.values(state.answers);
+      const totalWeight = items.reduce((s, x) => s + Number(x.weight || 0), 0) || 1;
+      const compliantWeight = items
+        .filter(x => x.status === "COMPLIANT")
+        .reduce((s, x) => s + Number(x.weight || 0), 0);
+      const pct = Math.round((compliantWeight / totalWeight) * 100);
+
+      const nonCompliant = items.filter(x => x.status === "NON_COMPLIANT");
+      const hasCritical = nonCompliant.some(x => x.severity === "CRITICAL");
+      const hasMajor = nonCompliant.some(x => x.severity === "MAJOR");
+
+      let riskCode = "LOW";
+      let riskLabel = "منخفضة / مستوفٍ (Low Risk)";
+      let decision = "استمرار التشغيل العادي مع متابعة دورية منتظمة.";
+
+      if (hasCritical) {
+        riskCode = "CRITICAL";
+        riskLabel = "حرجة / خطر داهم (Critical Hazard — Codex/HACCP/ISO 22000)";
+        decision = "إجراء فوري / إيقاف أو حجز احترازي للبنود أو النشاط المتأثر، وإحالة رقابية وإعادة تفتيش عاجلة.";
+      } else if (hasMajor || pct < 75) {
+        riskCode = "HIGH";
+        riskLabel = "عالية / جسيمة (High / Major Risk)";
+        decision = "إلزام المؤسسة بخطة تصحيحية (CAPA) خلال مهلة محددة وجدولة زيارة إعادة تفتيش.";
+      } else if (nonCompliant.length > 0) {
+        riskCode = "MEDIUM";
+        riskLabel = "متوسطة / بسيطة (Medium / Minor Risk)";
+        decision = "تثبيت الملاحظات في السجل وتصحيحها ضمن الإجراءات التشغيلية المعتادة.";
+      }
+
+      state.risk = { risk_code: riskCode, compliance_pct: pct, decision };
+      const box = document.getElementById("risk-box");
+      box.className = `risk-banner risk-${riskCode}`;
+      box.innerHTML = `
+        <div><strong>نسبة المطابقة الموزونة:</strong> ${pct}% | <strong>عدد البنود غير المطابقة:</strong> ${nonCompliant.length} من ${items.length}</div>
+        <div><strong>مستوى الخطورة:</strong> ${riskLabel}</div>
+        <div><strong>القرار الرقابي المقترح:</strong> ${decision}</div>
+      `;
+    }
+
+    document.getElementById("evidence-input").addEventListener("change", (e) => {
+      state.images = [];
+      const thumbs = document.getElementById("thumbs");
+      thumbs.innerHTML = "";
+      Array.from(e.target.files || []).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          state.images.push(ev.target.result);
+          const img = document.createElement("img");
+          img.src = ev.target.result;
+          thumbs.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    function setupSignaturePad(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext("2d");
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#0f2942";
+      let drawing = false;
+
+      function getPos(ev) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+        const clientY = ev.touches ? ev.touches[0].clientY : ev.clientY;
+        return {
+          x: (clientX - rect.left) * (canvas.width / rect.width),
+          y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+      }
+
+      canvas.addEventListener("pointerdown", (e) => {
+        drawing = true;
+        sigState[canvasId].dirty = true;
+        const p = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+      });
+      canvas.addEventListener("pointermove", (e) => {
+        if (!drawing) return;
+        const p = getPos(e);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      });
+      window.addEventListener("pointerup", () => { drawing = false; });
+    }
+
+    setupSignaturePad("sig-inspector");
+    setupSignaturePad("sig-rep");
+
+    function clearPad(canvasId) {
+      const c = document.getElementById(canvasId);
+      c.getContext("2d").clearRect(0, 0, c.width, c.height);
+      sigState[canvasId].dirty = false;
+    }
+
+    function openQueueDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open("lsfa_field_sync_db", 1);
+        req.onupgradeneeded = () => req.result.createObjectStore("queue", { keyPath: "local_id", autoIncrement: true });
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function enqueueSubmission(payload) {
+      const db = await openQueueDB();
+      const tx = db.transaction("queue", "readwrite");
+      tx.objectStore("queue").add(payload);
+      await refreshQueueBadge();
+    }
+
+    async function refreshQueueBadge() {
+      const db = await openQueueDB();
+      const tx = db.transaction("queue", "readonly");
+      const req = tx.objectStore("queue").getAll();
+      req.onsuccess = () => {
+        document.getElementById("queue-badge").textContent = `المعلقة للمزامنة: ${req.result.length}`;
+      };
+    }
+
+    async function flushQueue() {
+      if (!navigator.onLine) return;
+      const db = await openQueueDB();
+      const tx = db.transaction("queue", "readonly");
+      const req = tx.objectStore("queue").getAll();
+      req.onsuccess = async () => {
+        for (const item of req.result) {
+          const res = await fetch("{% url 'food_safety:api_field_submit' %}", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRFToken": CSRF_TOKEN },
+            body: JSON.stringify(item.payload)
+          });
+          if (res.ok) {
+            const delTx = db.transaction("queue", "readwrite");
+            delTx.objectStore("queue").delete(item.local_id);
+          }
+        }
+        await refreshQueueBadge();
+      };
+    }
+
+    function updateNetStatus() {
+      const el = document.getElementById("net-status");
+      if (navigator.onLine) {
+        el.textContent = "متصل بالشبكة";
+        flushQueue();
+      } else {
+        el.textContent = "دون إنترنت (حفظ محلي)";
+      }
+    }
+
+    async function submitInspection() {
+      const estName = document.getElementById("est-name").value.trim();
+      const statusEl = document.getElementById("submit-status");
+      if (!estName) {
+        statusEl.style.color = "#b42318";
+        statusEl.textContent = "يرجى إدخال اسم المؤسسة أولاً.";
+        return;
+      }
+
+      const offlineUuid = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : `OFF-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+
+      const inspectorSig = sigState["sig-inspector"].dirty
+        ? document.getElementById("sig-inspector").toDataURL("image/png")
+        : "";
+      const repSig = sigState["sig-rep"].dirty
+        ? document.getElementById("sig-rep").toDataURL("image/png")
+        : "";
+
+      const selectedGov = govSelect.value;
+
+      const payload = {
+        establishment_name: estName,
+        sector_code: sectorSelect.value,
+        governorate: selectedGov,
+        district: document.getElementById("est-dist").value.trim(),
+        address: document.getElementById("est-addr").value.trim(),
+        representative_name: document.getElementById("est-rep").value.trim(),
+        gps: state.gps,
+        answers: Object.values(state.answers),
+        risk_summary: state.risk,
+        general_notes: document.getElementById("general-notes").value.trim(),
+        signature_data_url: inspectorSig,
+        representative_signature_data_url: repSig,
+        evidence_images: state.images,
+        offline_uuid: offlineUuid,
+        captured_at: new Date().toISOString()
+      };
+
+      if (!navigator.onLine) {
+        await enqueueSubmission({ payload });
+        statusEl.style.color = "#b54708";
+        statusEl.textContent = "أنت غير متصل بالإنترنت — تم حفظ الكشف محلياً وسيُرسل تلقائياً عند عودة الاتصال.";
+        return;
+      }
+
+      const btn = document.getElementById("submit-btn");
+      btn.disabled = true;
+      statusEl.style.color = "#0f2942";
+      statusEl.textContent = "جاري إرسال الكشف وحفظ المؤسسة والمعرّف الثابت...";
+
+      try {
+        const res = await fetch("{% url 'food_safety:api_field_submit' %}", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-CSRFToken": CSRF_TOKEN },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok && data.ok) {
+          document.getElementById("est-code-preview").textContent = `المعرّف الثابت المعتمد: ${data.permanent_code}`;
+          const nonCompCount = Object.values(state.answers).filter(a => a.status === "NON_COMPLIANT").length;
+          const existingIdx = EXISTING_EST.findIndex(e => (e.permanent_code || e.code) === data.permanent_code);
+          if (existingIdx === -1) {
+            EXISTING_EST.push({
+              id: data.establishment_id,
+              code: data.permanent_code,
+              permanent_code: data.permanent_code,
+              name_ar: estName,
+              normalized_name_ar: normalizeAr(estName),
+              governorate: selectedGov,
+              district: payload.district,
+              address: payload.address,
+              visits_count: 1,
+              open_violations_count: nonCompCount,
+              last_risk_level: state.risk.risk_code
+            });
+          } else {
+            EXISTING_EST[existingIdx].governorate = selectedGov;
+            EXISTING_EST[existingIdx].visits_count = (EXISTING_EST[existingIdx].visits_count || 0) + 1;
+            EXISTING_EST[existingIdx].open_violations_count = (EXISTING_EST[existingIdx].open_violations_count || 0) + nonCompCount;
+            EXISTING_EST[existingIdx].last_risk_level = state.risk.risk_code;
+          }
+          try { localStorage.setItem(CACHE_EST_KEY, JSON.stringify(EXISTING_EST)); } catch (e) {}
+          rebuildSuggestions();
+          document.getElementById("est-name").dispatchEvent(new Event("input"));
+          statusEl.style.color = "#0f5132";
+          statusEl.textContent = `تم اعتماد الكشف (${data.reference_code}) بنجاح — المعرّف الثابت للمؤسسة: ${data.permanent_code}`;
+        } else {
+          throw new Error(data.error || "تعذّر حفظ الكشف.");
+        }
+      } catch (err) {
+        await enqueueSubmission({ payload });
+        statusEl.style.color = "#b54708";
+        statusEl.textContent = `تعذّر الإرسال المباشر (${err.message})، فتم حفظ الكشف في طابور المزامنة.`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    sectorSelect.addEventListener("change", renderChecklist);
+    window.addEventListener("online", updateNetStatus);
+    window.addEventListener("offline", updateNetStatus);
+
+    captureGPS();
+    renderChecklist();
+    updateNetStatus();
+    refreshQueueBadge();
+  </script>
+</body>
+</html>

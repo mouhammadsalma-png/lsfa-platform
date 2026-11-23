@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الهيئة اللبنانية لسلامة الغذاء - المنصة الوطنية الرقمية (LSFA)</title>
+  <style>
+    :root {
+      --navy: #0f2942;
+      --navy-2: #1b4368;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --alert: #b91c1c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, var(--navy), var(--navy-2));
+      color: #fff;
+      padding: 18px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    header h1 { margin: 0; font-size: 19px; }
+    header p { margin: 2px 0 0; font-size: 13px; color: #cbd5e1; }
+    .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255,255,255,0.14);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+    .container { max-width: 1180px; margin: 22px auto; padding: 0 18px; }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--navy);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .kpi span { font-size: 12.5px; color: var(--muted); }
+    .kpi strong { display: block; font-size: 24px; color: var(--navy); margin-top: 4px; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .card h2 { margin: 0 0 12px; font-size: 17px; color: var(--navy); }
+    .form-group { margin-bottom: 11px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    button {
+      background: var(--navy);
+      color: #fff;
+      border: 0;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .msg {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #166534;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    .alert-item {
+      border-right: 4px solid var(--alert);
+      background: #fef2f2;
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>الهيئة اللبنانية لسلامة الغذاء (LSFA)</h1>
+      <p>المنصة الوطنية الرقمية لإدارة سلامة الغذاء والرقابة والتتبع – الجمهورية اللبنانية</p>
+    </div>
+    <div class="nav-links">
+      <a href="/admin/">لوحة الإدارة والرقابة</a>
+      <a href="/api/">واجهات API البرمجية</a>
+      <a href="/api/summary/">ملخص المؤشرات JSON</a>
+    </div>
+  </header>
+
+  <div class="container">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="msg">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="kpi-grid">
+      <div class="kpi"><span>المؤسسات المسجلة</span><strong>{{ stats.establishments }}</strong></div>
+      <div class="kpi"><span>مؤسسات عالية الخطورة</span><strong>{{ stats.high_risk }}</strong></div>
+      <div class="kpi"><span>زيارات التفتيش</span><strong>{{ stats.inspections }}</strong></div>
+      <div class="kpi"><span>مخالفات قيد المتابعة</span><strong>{{ stats.open_violations }}</strong></div>
+      <div class="kpi"><span>عينات غير مطابقة</span><strong>{{ stats.non_conforming_samples }}</strong></div>
+      <div class="kpi"><span>عمليات استدعاء نشطة</span><strong>{{ stats.active_recalls }}</strong></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>بوابة المواطنين: تقديم شكوى أو بلاغ غذائي</h2>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>اسم المؤسسة أو المنتج المشتكى عليه *</label>
+            <input type="text" name="establishment_name" required placeholder="أدخل اسم المنشأة أو المنتج" />
+          </div>
+          <div class="form-group">
+            <label>المحافظة *</label>
+            <select name="governorate">
+              {% for val, label in governorates %}
+                <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>تفاصيل البلاغ *</label>
+            <textarea name="details" rows="3" required placeholder="اشرح المشكلة أو المخالفة الغذائية ومكانها..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>الاسم (اختياري)</label>
+            <input type="text" name="reporter_name" />
+          </div>
+          <div class="form-group">
+            <label>رقم الهاتف للتواصل (اختياري)</label>
+            <input type="text" name="reporter_phone" />
+          </div>
+          <button type="submit">إرسال البلاغ للهيئة</button>
+        </form>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>متابعة حالة بلاغ سابق</h2>
+          <form method="get" style="display:flex;gap:8px;">
+            <input type="text" name="track" value="{{ track_query }}" placeholder="أدخل رقم البلاغ مثل CMP-2026..." />
+            <button type="submit">بحث</button>
+          </form>
+          {% if track_query %}
+            <div style="margin-top:12px;font-size:14px;">
+              {% if tracked_complaint %}
+                <strong>المؤسسة:</strong> {{ tracked_complaint.establishment_name }}<br/>
+                <strong>الحالة الحالية:</strong> {{ tracked_complaint.get_status_display }}<br/>
+                {% if tracked_complaint.resolution_notes %}
+                  <strong>ملاحظات المعالجة:</strong> {{ tracked_complaint.resolution_notes }}
+                {% endif %}
+              {% else %}
+                <span style="color:#b91c1c;">لم يتم العثور على بلاغ بهذا الرقم.</span>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="card">
+          <h2>التحذيرات والاستدعاءات الغذائية العامة</h2>
+          {% if public_alerts %}
+            {% for item in public_alerts %}
+              <div class="alert-item">
+                <strong>{{ item.product_name }} (دفعة: {{ item.batch_code }})</strong><br/>
+                <small>الجهة: {{ item.producer_or_importer.name }} | الحالة: {{ item.get_status_display }}</small>
+                <p style="margin:6px 0 0;font-size:13.5px;">{{ item.recall_reason }}</p>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p style="color:var(--muted);font-size:14px;">لا توجد تحذيرات أو استدعاءات عامة نشطة حالياً.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
