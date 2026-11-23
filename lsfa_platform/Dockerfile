@@ -1,48 +1,18 @@
-import os
-from pathlib import Path
-import dj_database_url
+FROM python:3.12-slim
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-lsfa-dev-key-change-in-production")
+WORKDIR /app
 
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-ALLOWED_HOSTS = ["*"]
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "whitenoise.runserver_nostatic",
-    "django.contrib.staticfiles",
-    "rest_framework",
-    "food_safety",
-]
+COPY . .
 
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
-
-ROOT_URLCONF = "lsfa_core.urls"
-WSGI_APPLICATION = "lsfa_core.wsgi.application"
-
-DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-    )
-}
-
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate --noinput && gunicorn lsfa_core.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
